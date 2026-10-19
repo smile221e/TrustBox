@@ -138,14 +138,19 @@ export function ReviewsSection() {
 
   useEffect(() => {
     if (authLoading) return
-    if (!user) {
-      setItems([])
-      setLoaded(true)
-      return
-    }
 
     let cancelled = false
     void (async () => {
+      if (!user) {
+        if (!cancelled) {
+          setItems([])
+          setVotedIds(new Set())
+          setFailed(false)
+          setLoaded(true)
+        }
+        return
+      }
+
       try {
         const data = await listPublicReviews()
         if (cancelled) return
