@@ -1,13 +1,19 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('@/lib/env', () => ({
+  isFirebaseConfigured: vi.fn(() => false),
+}))
 
 import { isFirebaseConfigured } from '@/lib/env'
 
-import { SubmitFeedbackError, submitFeedback } from './submitFeedback'
+import { submitFeedback } from './submitFeedback'
 
 describe('submitFeedback', () => {
-  it('throws not_configured when Firebase env is missing', async () => {
-    expect(isFirebaseConfigured()).toBe(false)
+  beforeEach(() => {
+    vi.mocked(isFirebaseConfigured).mockReturnValue(false)
+  })
 
+  it('throws not_configured when Firebase env is missing', async () => {
     await expect(
       submitFeedback({
         type: 'anonymous',
@@ -20,6 +26,6 @@ describe('submitFeedback', () => {
     ).rejects.toMatchObject({
       name: 'SubmitFeedbackError',
       code: 'not_configured',
-    } satisfies Partial<SubmitFeedbackError>)
+    })
   })
 })
