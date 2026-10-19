@@ -1,4 +1,4 @@
-import { Heart, MessageCircle, X } from 'lucide-react'
+import { ChevronDown, Heart, MessageCircle } from 'lucide-react'
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -33,16 +33,16 @@ function statusTone(status: FeedbackStatus | undefined) {
   }
 }
 
-function CommentModal({
+function CommentsAccordion({
   thread,
-  open,
-  onClose,
+  expanded,
+  panelId,
   onSubmitted,
 }: {
   thread: PublicThread
-  open: boolean
-  onClose: () => void
-  onSubmitted: (comment: PublicComment, nextCount: number) => void
+  expanded: boolean
+  panelId: string
+  onSubmitted: (nextCount: number) => void
 }) {
   const { t } = useTranslation()
   const { email: accessEmail } = useAccess()
@@ -54,10 +54,13 @@ function CommentModal({
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loadedFor, setLoadedFor] = useState<string | null>(null)
   const displayEmail = email || accessEmail || ''
 
   useEffect(() => {
-    if (!open) return
+    if (!expanded) return
+    if (loadedFor === thread.id) return
+
     let cancelled = false
     void (async () => {
       setLoading(true)
@@ -65,6 +68,7 @@ function CommentModal({
         const list = await listComments(thread.id)
         if (!cancelled) {
           setComments(list)
+          setLoadedFor(thread.id)
           setError(null)
           if (accessEmail) setEmail(accessEmail)
         }
@@ -77,9 +81,7 @@ function CommentModal({
     return () => {
       cancelled = true
     }
-  }, [open, thread.id, accessEmail])
-
-  if (!open) return null
+  }, [expanded, thread.id, accessEmail, loadedFor])
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -94,7 +96,7 @@ function CommentModal({
       })
       setComments((prev) => [...prev, comment])
       setBody('')
-      onSubmitted(comment, thread.commentCount + 1)
+      onSubmitted(thread.commentCount + 1)
     } catch {
       setError(t('landing.reviews.commentError'))
     } finally {
@@ -104,122 +106,98 @@ function CommentModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={`${formId}-title`}
-      onClick={onClose}
+      id={panelId}
+      role="region"
+      className={cn(
+        'grid transition-[grid-template-rows] duration-300 ease-out',
+        expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+      )}
     >
-      <div
-        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3">
-          <div className="min-w-0">
-            <h3 id={`${formId}-title`} className="font-[family-name:var(--font-display)] text-lg font-semibold">
-              {t('landing.reviews.threadTitle')}
-            </h3>
-            <p className="mt-1 line-clamp-2 text-sm text-[var(--color-muted-foreground)]">
-              {thread.question}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md p-1 text-[var(--color-muted-foreground)] hover:bg-[var(--color-muted)]/50"
-            aria-label={t('common.backHome')}
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
-          {thread.answer && (
-            <div className="rounded-xl bg-[var(--color-muted)]/40 px-3 py-2.5">
-              <p className="text-xs font-medium text-[var(--color-primary)]">
-                {thread.answer.adminDisplayName} · Admin
-              </p>
-              <p className="mt-1 whitespace-pre-wrap text-sm">{thread.answer.body}</p>
-            </div>
-          )}
-
+      <div className="min-h-0 overflow-hidden">
+        <div className="space-y-4 border-t border-[var(--color-border)]/70 bg-[var(--color-muted)]/20 px-4 py-4 sm:px-5">
           {loading && (
             <p className="text-sm text-[var(--color-muted-foreground)]">{t('common.loading')}</p>
           )}
 
           {!loading && comments.length === 0 && (
-            <p className="text-sm text-[var(--color-muted-foreground)]">{t('landing.reviews.noComments')}</p>
-          )}
-
-          <ul className="space-y-3">
-            {comments.map((c) => (
-              <li key={c.id} className="flex gap-3">
-                <div
-                  className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/15 text-xs font-semibold text-[var(--color-primary)]"
-                  aria-hidden
-                >
-                  {c.name.slice(0, 1).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1 rounded-2xl bg-[var(--color-muted)]/35 px-3 py-2">
-                  <p className="text-xs font-medium">
-                    {c.name}
-                    <span className="ml-2 font-normal text-[var(--color-muted-foreground)]">{c.email}</span>
-                  </p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{c.body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <form
-          onSubmit={(e) => void onSubmit(e)}
-          className="space-y-3 border-t border-[var(--color-border)] px-4 py-3"
-        >
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
-              <Label htmlFor={`${formId}-name`}>{t('form.name.label')}</Label>
-              <Input
-                id={`${formId}-name`}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                maxLength={120}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor={`${formId}-email`}>{t('form.email.label')}</Label>
-              <Input
-                id={`${formId}-email`}
-                type="email"
-                value={displayEmail}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor={`${formId}-body`}>{t('landing.reviews.commentLabel')}</Label>
-            <Textarea
-              id={`${formId}-body`}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              required
-              minLength={2}
-              maxLength={2000}
-              rows={3}
-              placeholder={t('landing.reviews.commentPlaceholder')}
-            />
-          </div>
-          {error && (
-            <p className="text-sm text-[var(--color-danger)]" role="alert">
-              {error}
+            <p className="text-sm text-[var(--color-muted-foreground)]">
+              {t('landing.reviews.noComments')}
             </p>
           )}
-          <Button type="submit" disabled={saving || body.trim().length < 2 || !name.trim()}>
-            {saving ? t('common.loading') : t('landing.reviews.commentSend')}
-          </Button>
-        </form>
+
+          {!loading && comments.length > 0 && (
+            <ul className="space-y-3">
+              {comments.map((c) => (
+                <li key={c.id} className="flex gap-3">
+                  <div
+                    className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/15 text-xs font-semibold text-[var(--color-primary)]"
+                    aria-hidden
+                  >
+                    {c.name.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1 rounded-2xl bg-[var(--color-card)] px-3 py-2 ring-1 ring-[var(--color-border)]/50">
+                    <p className="text-xs font-medium">
+                      {c.name}
+                      <span className="ml-2 font-normal text-[var(--color-muted-foreground)]">
+                        {c.email}
+                      </span>
+                    </p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{c.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form onSubmit={(e) => void onSubmit(e)} className="space-y-3 pt-1">
+            <p className="text-sm font-medium text-[var(--color-foreground)]">
+              {t('landing.reviews.threadTitle')}
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1">
+                <Label htmlFor={`${formId}-name`}>{t('form.name.label')}</Label>
+                <Input
+                  id={`${formId}-name`}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  maxLength={120}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor={`${formId}-email`}>{t('form.email.label')}</Label>
+                <Input
+                  id={`${formId}-email`}
+                  type="email"
+                  value={displayEmail}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${formId}-body`}>{t('landing.reviews.commentLabel')}</Label>
+              <Textarea
+                id={`${formId}-body`}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                required
+                minLength={2}
+                maxLength={2000}
+                rows={3}
+                placeholder={t('landing.reviews.commentPlaceholder')}
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-[var(--color-danger)]" role="alert">
+                {error}
+              </p>
+            )}
+            <Button type="submit" disabled={saving || body.trim().length < 2 || !name.trim()}>
+              {saving ? t('common.loading') : t('landing.reviews.commentSend')}
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   )
@@ -229,14 +207,16 @@ function AnswerCard({
   thread,
   hearted,
   onToggleHeart,
-  onOpenComments,
+  onCommentCountChange,
 }: {
   thread: PublicThread
   hearted: boolean
   onToggleHeart: (id: string) => void
-  onOpenComments: (thread: PublicThread) => void
+  onCommentCountChange: (id: string, nextCount: number) => void
 }) {
   const { t, i18n } = useTranslation()
+  const panelId = useId()
+  const [expanded, setExpanded] = useState(false)
   const language = (
     ['uk', 'en', 'es'].includes(i18n.language) ? i18n.language : 'uk'
   ) as AppLanguage
@@ -317,17 +297,33 @@ function AnswerCard({
           <div className="flex items-center gap-3 pt-1 text-xs text-[var(--color-muted-foreground)]">
             <button
               type="button"
-              onClick={() => onOpenComments(thread)}
+              onClick={() => setExpanded((v) => !v)}
               className="inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 transition-colors hover:bg-[var(--color-muted)]/50 hover:text-[var(--color-foreground)]"
+              aria-expanded={expanded}
+              aria-controls={panelId}
               aria-label={t('landing.reviews.openComments')}
             >
               <MessageCircle className="h-3.5 w-3.5" aria-hidden />
               {thread.commentCount}
+              <ChevronDown
+                className={cn(
+                  'h-3.5 w-3.5 transition-transform duration-200',
+                  expanded && 'rotate-180',
+                )}
+                aria-hidden
+              />
             </button>
             <span>{formatRelativeTime(thread.createdAt, language)}</span>
           </div>
         </div>
       </div>
+
+      <CommentsAccordion
+        thread={thread}
+        expanded={expanded}
+        panelId={panelId}
+        onSubmitted={(nextCount) => onCommentCountChange(thread.id, nextCount)}
+      />
     </article>
   )
 }
@@ -339,7 +335,6 @@ export function ReviewsSection() {
   const [heartedIds, setHeartedIds] = useState<Set<string>>(new Set())
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
-  const [activeThread, setActiveThread] = useState<PublicThread | null>(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -431,7 +426,13 @@ export function ReviewsSection() {
                     thread={item}
                     hearted={heartedIds.has(item.id)}
                     onToggleHeart={(id) => void onToggleHeart(id)}
-                    onOpenComments={setActiveThread}
+                    onCommentCountChange={(id, nextCount) => {
+                      setItems((prev) =>
+                        prev.map((row) =>
+                          row.id === id ? { ...row, commentCount: nextCount } : row,
+                        ),
+                      )
+                    }}
                   />
                 </li>
               </Reveal>
@@ -439,22 +440,6 @@ export function ReviewsSection() {
           </ul>
         )}
       </div>
-
-      {activeThread && (
-        <CommentModal
-          thread={activeThread}
-          open
-          onClose={() => setActiveThread(null)}
-          onSubmitted={(_comment, nextCount) => {
-            setItems((prev) =>
-              prev.map((item) =>
-                item.id === activeThread.id ? { ...item, commentCount: nextCount } : item,
-              ),
-            )
-            setActiveThread((prev) => (prev ? { ...prev, commentCount: nextCount } : prev))
-          }}
-        />
-      )}
     </section>
   )
 }
