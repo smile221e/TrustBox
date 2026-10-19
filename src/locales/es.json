@@ -28,7 +28,7 @@
     "errors": {
       "domain": "Correo corporativo incorrecto",
       "invalid": "Correo corporativo incorrecto",
-      "not_configured": "La verificación de empleados no está disponible temporalmente.",
+      "not_configured": "El backend aún no está conectado (Cloud Functions). Consulta a un admin.",
       "unavailable": "No se pudo verificar el email. Inténtalo más tarde.",
       "unknown": "No se pudo verificar el email. Inténtalo más tarde.",
       "unauthenticated": "Primero inicia sesión con Google.",

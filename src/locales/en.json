@@ -28,7 +28,7 @@
     "errors": {
       "domain": "Incorrect corporate email",
       "invalid": "Incorrect corporate email",
-      "not_configured": "Employee verification is temporarily unavailable.",
+      "not_configured": "Backend is not connected yet (Cloud Functions). Ask an admin.",
       "unavailable": "Could not verify email. Please try later.",
       "unknown": "Could not verify email. Please try later.",
       "unauthenticated": "Please sign in with Google first.",

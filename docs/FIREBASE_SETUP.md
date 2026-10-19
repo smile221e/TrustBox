@@ -14,6 +14,11 @@ Email is taken from the ID token — the client cannot spoof another mailbox.
 Local PeopleForce check in `npm run dev`: Vite `/api/verify-access` + `PEOPLEFORCE_API_KEY` in `.env`.
 Production: same key on Cloud Functions (`functions/.env` / Secret Manager).
 
+Until Functions are deployed, GitHub Pages may use `VITE_ALLOW_DOMAIN_FALLBACK=true`
+(any Google user with `@221e.space`). Turn it **off** after Functions go live.
+
+Also add Firebase Auth authorized domain: `smile221e.github.io`.
+
 **Never commit the PeopleForce Company API key.**
 
 

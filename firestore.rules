@@ -48,6 +48,13 @@ service cloud.firestore {
       allow write: if isSuperAdmin();
     }
 
+    // Temporary allowlist until Cloud Functions + PeopleForce are live.
+    // Doc id must be the lowercase corporate email.
+    match /accessAllowlist/{email} {
+      allow get: if signedIn() && request.auth.token.email == email;
+      allow list, create, update, delete: if false;
+    }
+
     // Rate limits & audit: Functions / super_admin only.
     match /rateLimits/{id} {
       allow read, write: if false;
