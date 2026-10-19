@@ -80,10 +80,17 @@
     },
     "reviews": {
       "title": "Replies",
-      "empty": "No published replies yet.",
+      "empty": "No published questions yet. Check the allow-publish box when submitting feedback.",
       "error": "Could not load replies. Try refreshing the page.",
-      "upvote": "Upvote",
-      "admin": "Admin"
+      "heart": "Like",
+      "admin": "Admin",
+      "openComments": "Comments",
+      "threadTitle": "Discussion",
+      "noComments": "No comments yet — be the first.",
+      "commentLabel": "Comment or follow-up",
+      "commentPlaceholder": "Your question or thought…",
+      "commentSend": "Send",
+      "commentError": "Could not send the comment."
     }
   },
   "form": {
@@ -122,7 +129,7 @@
       "placeholder": "Describe the situation as specifically as you can…",
       "hint": "At least {{min}} characters"
     },
-    "allowPublicReply": "Allow an admin to publish the reply in the on-site reviews section (without your name if anonymous).",
+    "allowPublicReply": "Show this feedback in the on-site Answers section (the admin reply can appear there too).",
     "emailFromAuth": "Uses your Google account email.",
     "errors": {
       "type": "Choose a feedback type",

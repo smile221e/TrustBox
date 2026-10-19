@@ -63,6 +63,10 @@ service cloud.firestore {
         && value.size() <= 64;
     }
 
+    function intField(data, key) {
+      return key in data && data[key] is int ? data[key] : 0;
+    }
+
     function isBootstrapSuperAdminCreate() {
       return signedIn()
         && authEmail() == 'smile@221e.space'
@@ -89,7 +93,8 @@ service cloud.firestore {
     }
 
     match /feedback/{id} {
-      allow read: if isAdmin();
+      allow read: if isAdmin()
+        || (corporateEmail() && resource.data.allowPublicReply == true);
 
       allow create: if corporateEmail()
         && request.resource.data.accessEmail == authEmail()
@@ -106,18 +111,70 @@ service cloud.firestore {
         && request.resource.data.message is string
         && request.resource.data.message.size() >= 20
         && request.resource.data.message.size() <= 4000
+        && request.resource.data.heartCount == 0
+        && request.resource.data.commentCount == 0
         && request.resource.data.keys().hasAll([
           'type', 'topicId', 'message', 'recipientId', 'recipientName',
           'status', 'language', 'accessEmail', 'createdByUid',
           'createdAt', 'updatedAt', 'name', 'nickname', 'email',
-          'allowPublicReply'
+          'allowPublicReply', 'heartCount', 'commentCount'
         ]);
 
-      allow update: if isAdmin()
-        && request.resource.data.diff(resource.data).changedKeys()
-            .hasOnly(['status', 'updatedAt']);
+      allow update: if (isAdmin()
+            && request.resource.data.diff(resource.data).changedKeys()
+                .hasOnly(['status', 'updatedAt']))
+        || (corporateEmail()
+            && resource.data.allowPublicReply == true
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['heartCount'])
+            && request.resource.data.heartCount is int
+            && request.resource.data.heartCount >= 0
+            && (request.resource.data.heartCount == intField(resource.data, 'heartCount') + 1
+                || request.resource.data.heartCount == intField(resource.data, 'heartCount') - 1))
+        || (corporateEmail()
+            && resource.data.allowPublicReply == true
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['commentCount'])
+            && request.resource.data.commentCount is int
+            && request.resource.data.commentCount
+                == intField(resource.data, 'commentCount') + 1);
 
       allow delete: if isSuperAdmin();
+    }
+
+    match /feedbackHearts/{id} {
+      allow read: if corporateEmail()
+        && (!exists(/databases/$(database)/documents/feedbackHearts/$(id))
+            || resource.data.uid == request.auth.uid);
+
+      allow create: if corporateEmail()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.feedbackId is string
+        && id == request.resource.data.feedbackId + '_' + request.auth.uid;
+
+      allow delete: if corporateEmail()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    match /feedbackComments/{id} {
+      allow read: if corporateEmail()
+        && exists(/databases/$(database)/documents/feedback/$(resource.data.feedbackId))
+        && get(/databases/$(database)/documents/feedback/$(resource.data.feedbackId)).data.allowPublicReply == true;
+
+      allow create: if corporateEmail()
+        && request.resource.data.feedbackId is string
+        && exists(/databases/$(database)/documents/feedback/$(request.resource.data.feedbackId))
+        && get(/databases/$(database)/documents/feedback/$(request.resource.data.feedbackId)).data.allowPublicReply == true
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() >= 3
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.body is string
+        && request.resource.data.body.size() >= 2
+        && request.resource.data.body.size() <= 2000
+        && request.resource.data.createdByUid == request.auth.uid;
+
+      allow update, delete: if isSuperAdmin();
     }
 
     match /feedbackReplies/{id} {

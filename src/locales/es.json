@@ -80,10 +80,17 @@
     },
     "reviews": {
       "title": "Respuestas",
-      "empty": "Aún no hay respuestas publicadas.",
+      "empty": "Aún no hay preguntas publicadas. Marca el permiso al enviar el mensaje.",
       "error": "No se pudieron cargar las respuestas. Prueba a actualizar la página.",
-      "upvote": "Votar",
-      "admin": "Admin"
+      "heart": "Me gusta",
+      "admin": "Admin",
+      "openComments": "Comentarios",
+      "threadTitle": "Discusión",
+      "noComments": "Aún no hay comentarios — sé el primero.",
+      "commentLabel": "Comentario o pregunta",
+      "commentPlaceholder": "Tu pregunta o idea…",
+      "commentSend": "Enviar",
+      "commentError": "No se pudo enviar el comentario."
     }
   },
   "form": {
@@ -122,7 +129,7 @@
       "placeholder": "Describe la situación con el mayor detalle posible…",
       "hint": "Mínimo {{min}} caracteres"
     },
-    "allowPublicReply": "Permitir que un admin publique la respuesta en la sección de reseñas (sin tu nombre si es anónimo).",
+    "allowPublicReply": "Mostrar este mensaje en la sección Respuestas del sitio (la respuesta del admin también puede aparecer ahí).",
     "emailFromAuth": "Se usa el email de tu cuenta de Google.",
     "errors": {
       "type": "Elige un tipo de mensaje",
