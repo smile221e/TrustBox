@@ -9,17 +9,17 @@ export function FeedbackSection() {
 
   return (
     <section id="feedback" className="scroll-mt-24 border-t border-[var(--color-border)]/60">
-      <div className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-28">
+      <div className="w-full px-4 py-20 md:px-6 md:py-28 lg:px-10">
         <Reveal>
           <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
             {t('landing.feedback.title')}
           </h2>
-          <p className="mt-3 max-w-xl text-base text-[var(--color-muted-foreground)] md:text-lg">
+          <p className="mt-3 max-w-2xl text-base text-[var(--color-muted-foreground)] md:text-lg">
             {t('landing.feedback.subtitle')}
           </p>
         </Reveal>
 
-        <Reveal delay={0.1} className="relative mt-10 max-w-2xl">
+        <Reveal delay={0.1} className="relative mt-10 w-full">
           <FeedbackForm />
         </Reveal>
       </div>
