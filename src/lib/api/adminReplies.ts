@@ -9,6 +9,7 @@ import {
   query,
   runTransaction,
   serverTimestamp,
+  updateDoc,
   where,
   type Timestamp,
 } from 'firebase/firestore'
@@ -90,11 +91,13 @@ export async function createReply(input: {
     sentByAdminId: user.uid,
     sentByEmail: user.email.trim().toLowerCase(),
     deliveryStatus: 'accepted',
-    isPublic: input.isPublic,
+    isPublic: Boolean(input.isPublic),
     topicId: input.topicId,
     questionText: input.questionText.trim().slice(0, 4000),
     authorKind: input.authorKind,
-    authorName: input.authorKind === 'identified' ? input.authorName : null,
+    // Always a string — null breaks strict Firestore rules / keys checks.
+    authorName:
+      input.authorKind === 'identified' ? (input.authorName ?? '').trim() : '',
     feedbackStatus: input.feedbackStatus,
     adminDisplayName,
     upvoteCount: 0,
@@ -102,6 +105,32 @@ export async function createReply(input: {
   })
 
   return ref.id
+}
+
+/** Publish (or unpublish) an existing reply on the public Answers wall. */
+export async function setReplyPublic(input: {
+  replyId: string
+  isPublic: boolean
+  questionText: string
+  authorKind: FeedbackType
+  authorName: string | null
+  feedbackStatus: FeedbackStatus
+}): Promise<void> {
+  const user = getFirebaseAuth().currentUser
+  const adminDisplayName =
+    user?.displayName?.trim() ||
+    user?.email?.trim().toLowerCase().split('@')[0] ||
+    'Admin'
+
+  await updateDoc(doc(getDb(), 'feedbackReplies', input.replyId), {
+    isPublic: Boolean(input.isPublic),
+    questionText: input.questionText.trim().slice(0, 4000),
+    authorKind: input.authorKind,
+    authorName:
+      input.authorKind === 'identified' ? (input.authorName ?? '').trim() : '',
+    feedbackStatus: input.feedbackStatus,
+    adminDisplayName,
+  })
 }
 
 export async function listPublicReviews(limitCount = 40): Promise<AdminReplyDoc[]> {

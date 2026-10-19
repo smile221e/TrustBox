@@ -17,6 +17,7 @@ import {
 import {
   createReply,
   listRepliesForFeedback,
+  setReplyPublic,
   type AdminReplyDoc,
 } from '@/lib/api/adminReplies'
 import { FEEDBACK_STATUSES, type FeedbackStatus } from '@/lib/constants'
@@ -29,14 +30,14 @@ function DetailInner() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [replyBody, setReplyBody] = useState('')
-  const [publishPublic, setPublishPublic] = useState(false)
+  const [publishPublic, setPublishPublic] = useState(true)
   const [saving, setSaving] = useState(false)
 
   const reload = async () => {
     const feedback = await getFeedback(id)
     setItem(feedback)
     if (feedback) {
-      setPublishPublic(feedback.allowPublicReply)
+      setPublishPublic(true)
       setReplies(await listRepliesForFeedback(id))
     }
   }
@@ -82,7 +83,7 @@ function DetailInner() {
       await createReply({
         feedbackId: item.id,
         body: replyBody,
-        isPublic: item.allowPublicReply && publishPublic,
+        isPublic: publishPublic,
         topicId: item.topicId,
         questionText: item.message,
         authorKind: item.type,
@@ -94,8 +95,33 @@ function DetailInner() {
       }
       setReplyBody('')
       await reload()
-    } catch {
-      setError(t('admin.errors.save'))
+    } catch (err) {
+      const detail =
+        err && typeof err === 'object' && 'message' in err ? String((err as Error).message) : ''
+      setError(detail ? `${t('admin.errors.save')} (${detail})` : t('admin.errors.save'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const onTogglePublic = async (reply: AdminReplyDoc) => {
+    if (!item) return
+    setSaving(true)
+    setError(null)
+    try {
+      await setReplyPublic({
+        replyId: reply.id,
+        isPublic: !reply.isPublic,
+        questionText: item.message,
+        authorKind: item.type,
+        authorName: item.name,
+        feedbackStatus: item.status,
+      })
+      await reload()
+    } catch (err) {
+      const detail =
+        err && typeof err === 'object' && 'message' in err ? String((err as Error).message) : ''
+      setError(detail ? `${t('admin.errors.save')} (${detail})` : t('admin.errors.save'))
     } finally {
       setSaving(false)
     }
@@ -204,12 +230,23 @@ function DetailInner() {
             <li className="text-sm text-[var(--color-muted-foreground)]">{t('admin.replies.empty')}</li>
           )}
           {replies.map((r) => (
-            <li key={r.id} className="border-l-2 border-[var(--color-primary)]/40 pl-4">
+            <li key={r.id} className="space-y-2 border-l-2 border-[var(--color-primary)]/40 pl-4">
               <p className="whitespace-pre-wrap text-sm">{r.body}</p>
-              <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-                {r.sentByEmail} · {formatFeedbackDate(r.createdAt)}
-                {r.isPublic ? ` · ${t('admin.replies.public')}` : ''}
-              </p>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
+                <span>
+                  {r.sentByEmail} · {formatFeedbackDate(r.createdAt)}
+                  {r.isPublic ? ` · ${t('admin.replies.public')}` : ` · ${t('admin.replies.private')}`}
+                </span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  disabled={saving}
+                  onClick={() => void onTogglePublic(r)}
+                >
+                  {r.isPublic ? t('admin.replies.unpublish') : t('admin.replies.publish')}
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
@@ -227,17 +264,16 @@ function DetailInner() {
               maxLength={4000}
             />
           </div>
-          {item.allowPublicReply ? (
-            <label className="flex items-start gap-2 text-sm">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={publishPublic}
-                onChange={(e) => setPublishPublic(e.target.checked)}
-              />
-              <span>{t('admin.replies.publishHint')}</span>
-            </label>
-          ) : (
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={publishPublic}
+              onChange={(e) => setPublishPublic(e.target.checked)}
+            />
+            <span>{t('admin.replies.publishHint')}</span>
+          </label>
+          {!item.allowPublicReply && (
             <p className="text-xs text-[var(--color-muted-foreground)]">
               {t('admin.replies.noPublicOptIn')}
             </p>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Reveal } from '@/features/landing/Reveal'
+import { useAuth } from '@/hooks/useAuth'
 import {
   listMyUpvotedReplyIds,
   listPublicReviews,
@@ -129,12 +130,20 @@ function AnswerCard({
 
 export function ReviewsSection() {
   const { t } = useTranslation()
+  const { user, loading: authLoading } = useAuth()
   const [items, setItems] = useState<AdminReplyDoc[]>([])
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set())
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      setItems([])
+      setLoaded(true)
+      return
+    }
+
     let cancelled = false
     void (async () => {
       try {
@@ -156,7 +165,7 @@ export function ReviewsSection() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [authLoading, user])
 
   const onToggleVote = async (id: string) => {
     try {

@@ -117,18 +117,18 @@ service cloud.firestore {
         && request.resource.data.questionText.size() >= 1
         && request.resource.data.questionText.size() <= 4000
         && request.resource.data.authorKind in ['anonymous', 'identified']
+        && request.resource.data.authorName is string
         && request.resource.data.feedbackStatus in ['new', 'in_progress', 'closed']
         && request.resource.data.adminDisplayName is string
-        && request.resource.data.upvoteCount == 0
-        && request.resource.data.keys().hasAll([
-          'feedbackId', 'body', 'sentByAdminId', 'sentByEmail',
-          'deliveryStatus', 'isPublic', 'topicId', 'createdAt',
-          'questionText', 'authorKind', 'authorName', 'feedbackStatus',
-          'adminDisplayName', 'upvoteCount'
-        ]);
+        && request.resource.data.upvoteCount is int
+        && request.resource.data.upvoteCount == 0;
 
-      // Corporate users may only change upvoteCount by ±1 on public replies.
-      allow update: if isSuperAdmin()
+      allow update: if isAdmin()
+          && request.resource.data.diff(resource.data).changedKeys()
+              .hasOnly([
+                'isPublic', 'questionText', 'authorKind', 'authorName',
+                'feedbackStatus', 'adminDisplayName', 'upvoteCount'
+              ])
         || (corporateEmail()
             && resource.data.isPublic == true
             && request.resource.data.diff(resource.data).changedKeys().hasOnly(['upvoteCount'])

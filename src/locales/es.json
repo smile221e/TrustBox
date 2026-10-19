@@ -211,8 +211,11 @@
       "send": "Enviar respuesta",
       "sending": "Enviando…",
       "public": "En el sitio",
-      "publishHint": "Publicar esta respuesta en la sección de reseñas del sitio",
-      "noPublicOptIn": "El autor no permitió publicar la respuesta en el sitio."
+      "publishHint": "Publicar esta respuesta en la sección Respuestas del sitio",
+      "noPublicOptIn": "El autor no dio permiso — publica solo si es apropiado.",
+      "publish": "Mostrar en el sitio",
+      "unpublish": "Quitar del sitio",
+      "private": "No en el sitio"
     },
     "errors": {
       "load": "No se pudieron cargar los datos.",

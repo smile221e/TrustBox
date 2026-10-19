@@ -211,8 +211,11 @@
       "send": "Send reply",
       "sending": "Sending…",
       "public": "On site",
-      "publishHint": "Publish this reply in the on-site reviews section",
-      "noPublicOptIn": "The author did not allow publishing the reply on the site."
+      "publishHint": "Publish this reply in the on-site Answers section",
+      "noPublicOptIn": "The author did not opt in — publish only if appropriate.",
+      "publish": "Show on site",
+      "unpublish": "Remove from site",
+      "private": "Not on site"
     },
     "errors": {
       "load": "Could not load data.",
