@@ -1,0 +1,10 @@
+[
+  { "id": "unspecified", "name": "Unspecified", "email": "", "isActive": true, "sortOrder": 0 },
+  { "id": "owner", "name": "Owner", "email": "", "isActive": true, "sortOrder": 1 },
+  { "id": "ceo", "name": "CEO", "email": "", "isActive": true, "sortOrder": 2 },
+  { "id": "hrd", "name": "HR Director", "email": "", "isActive": true, "sortOrder": 3 },
+  { "id": "sfo", "name": "Security / Compliance", "email": "", "isActive": true, "sortOrder": 4 },
+  { "id": "tso", "name": "Tech / Operations", "email": "", "isActive": true, "sortOrder": 5 },
+  { "id": "cco", "name": "Customer / Commercial", "email": "", "isActive": true, "sortOrder": 6 },
+  { "id": "cmo", "name": "Marketing / Communications", "email": "", "isActive": true, "sortOrder": 7 }
+]

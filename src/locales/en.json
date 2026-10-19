@@ -1,0 +1,176 @@
+{
+  "app": {
+    "name": "TrustBox",
+    "tagline": "A safe space for feedback"
+  },
+  "nav": {
+    "home": "Home",
+    "admin": "Admin",
+    "privacy": "Privacy",
+    "contacts": "Contacts"
+  },
+  "theme": {
+    "light": "Light theme",
+    "dark": "Dark theme",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "label": "Language",
+    "uk": "Українська",
+    "en": "English",
+    "es": "Español"
+  },
+  "access": {
+    "title": "Employee sign-in",
+    "google": "Sign in with Google",
+    "signOut": "Sign out",
+    "checking": "Checking…",
+    "errors": {
+      "domain": "Incorrect corporate email",
+      "invalid": "Incorrect corporate email",
+      "not_configured": "Employee verification is temporarily unavailable.",
+      "unavailable": "Could not verify email. Please try later.",
+      "unknown": "Could not verify email. Please try later.",
+      "unauthenticated": "Please sign in with Google first.",
+      "firebase_required": "Firebase is required. Add VITE_FIREBASE_* to .env.",
+      "google_failed": "Google sign-in failed. Please try again.",
+      "unauthorized_domain": "This domain is not allowed in Firebase Authentication."
+    }
+  },
+  "landing": {
+    "cta": "Submit feedback",
+    "nav": {
+      "how": "How it works",
+      "privacy": "Privacy"
+    },
+    "hero": {
+      "headline": "Say what matters — anonymously or in your name",
+      "support": "A corporate trust box for ideas, questions, and signals. Quiet by design, respectful of your privacy.",
+      "secondaryCta": "How it works"
+    },
+    "how": {
+      "title": "How it works",
+      "subtitle": "Three short steps from thought to message.",
+      "steps": {
+        "choose": {
+          "title": "Pick a topic and recipient",
+          "body": "Choose what it’s about and who should hear it — or leave the recipient open."
+        },
+        "write": {
+          "title": "Write your message",
+          "body": "Describe the situation in your own words. Stay anonymous or add a contact."
+        },
+        "send": {
+          "title": "Send securely",
+          "body": "Messages travel through a protected channel. Recipients see the content — not your technical trail."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Privacy by default",
+      "body": "Anonymous submissions need no name or email. Only authorized admins can read feedback. The client never writes to the database directly — only through a validated server function."
+    },
+    "topics": {
+      "title": "What you can write about",
+      "subtitle": "Any topic that affects work and team culture."
+    },
+    "feedback": {
+      "title": "Your message",
+      "subtitle": "Two steps — and your feedback is ready to send."
+    }
+  },
+  "form": {
+    "step": "Step {{current}} of {{total}}",
+    "optional": "optional",
+    "honeypot": "Leave blank",
+    "next": "Continue",
+    "back": "Back",
+    "submit": "Send",
+    "submitting": "Sending…",
+    "type": {
+      "label": "Feedback type",
+      "anonymous": "Anonymous",
+      "anonymousHint": "No name or contact",
+      "identified": "In your name",
+      "identifiedHint": "You can receive a reply"
+    },
+    "topic": {
+      "label": "Topic",
+      "placeholder": "Select a topic"
+    },
+    "recipient": {
+      "label": "Recipient"
+    },
+    "name": {
+      "label": "Name"
+    },
+    "nickname": {
+      "label": "Nickname"
+    },
+    "email": {
+      "label": "Email"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Describe the situation as specifically as you can…",
+      "hint": "At least {{min}} characters"
+    },
+    "errors": {
+      "type": "Choose a feedback type",
+      "topic": "Choose a topic",
+      "recipient": "Choose a recipient",
+      "name": "Enter your name",
+      "emailRequired": "Enter your email",
+      "emailInvalid": "Invalid email",
+      "messageShort": "Message is too short",
+      "messageLong": "Message is too long",
+      "submit": {
+        "not_configured": "Firebase is not configured yet. Add VITE_FIREBASE_* to .env.",
+        "rate_limited": "Too many submissions from your network. Please try later.",
+        "invalid": "Check the form fields and try again.",
+        "unavailable": "The service is temporarily unavailable. Please try later.",
+        "unauthenticated": "Session expired. Sign in with Google again.",
+        "unknown": "Could not send your feedback. Please try again."
+      }
+    },
+    "success": {
+      "title": "Thank you — feedback sent",
+      "body": "We received your message. If you left a contact, a reply will go to that email.",
+      "another": "Write another"
+    }
+  },
+  "recipients": {
+    "unspecified": "No specific recipient",
+    "owner": "Owner",
+    "ceo": "CEO",
+    "hrd": "HR Director",
+    "sfo": "Security / Compliance",
+    "tso": "Tech / Operations",
+    "cco": "Customer / Commercial",
+    "cmo": "Marketing / Communications"
+  },
+  "admin": {
+    "title": "TrustBox Admin",
+    "loginTitle": "Admin sign-in",
+    "loginHint": "Firebase authentication will be wired in stage 05.",
+    "dashboard": "Dashboard",
+    "recipients": "Recipients",
+    "unavailable": "Admin panel is not connected to Firebase yet."
+  },
+  "common": {
+    "loading": "Loading…",
+    "notFound": "Page not found",
+    "backHome": "Back home"
+  },
+  "topics": {
+    "manager_communication": "Manager communication",
+    "salary": "Pay and financial questions",
+    "work_conditions": "Working conditions",
+    "team": "Team and colleagues",
+    "learning": "Learning and development",
+    "ideas": "Ideas and suggestions",
+    "ethics": "Ethics and misconduct",
+    "thanks": "Appreciation",
+    "other": "Other"
+  }
+}

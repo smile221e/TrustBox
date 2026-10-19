@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TrustBox</title>
+    <script>
+      // GitHub Pages SPA fallback (used with HashRouter as secondary safety net).
+      // Redirects deep links into the app entry while preserving path after base.
+      sessionStorage.setItem('tb:redirect', location.href)
+      location.replace(location.origin + location.pathname.replace(/\/[^/]*$/, '/') + 'index.html')
+    </script>
+  </head>
+  <body></body>
+</html>

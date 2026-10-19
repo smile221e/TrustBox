@@ -1,0 +1,176 @@
+{
+  "app": {
+    "name": "TrustBox",
+    "tagline": "Un espacio seguro para el feedback"
+  },
+  "nav": {
+    "home": "Inicio",
+    "admin": "Admin",
+    "privacy": "Privacidad",
+    "contacts": "Contactos"
+  },
+  "theme": {
+    "light": "Tema claro",
+    "dark": "Tema oscuro",
+    "toggle": "Cambiar tema"
+  },
+  "language": {
+    "label": "Idioma",
+    "uk": "Українська",
+    "en": "English",
+    "es": "Español"
+  },
+  "access": {
+    "title": "Acceso de empleados",
+    "google": "Iniciar sesión con Google",
+    "signOut": "Cerrar sesión",
+    "checking": "Comprobando…",
+    "errors": {
+      "domain": "Correo corporativo incorrecto",
+      "invalid": "Correo corporativo incorrecto",
+      "not_configured": "La verificación de empleados no está disponible temporalmente.",
+      "unavailable": "No se pudo verificar el email. Inténtalo más tarde.",
+      "unknown": "No se pudo verificar el email. Inténtalo más tarde.",
+      "unauthenticated": "Primero inicia sesión con Google.",
+      "firebase_required": "Se requiere Firebase. Añade VITE_FIREBASE_* en .env.",
+      "google_failed": "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+      "unauthorized_domain": "Este dominio no está permitido en Firebase Authentication."
+    }
+  },
+  "landing": {
+    "cta": "Enviar mensaje",
+    "nav": {
+      "how": "Cómo funciona",
+      "privacy": "Privacidad"
+    },
+    "hero": {
+      "headline": "Di lo que importa — de forma anónima o con tu nombre",
+      "support": "Una urna de confianza corporativa para ideas, preguntas y señales. Diseñada con discreción y respeto a tu privacidad.",
+      "secondaryCta": "Cómo funciona"
+    },
+    "how": {
+      "title": "Cómo funciona",
+      "subtitle": "Tres pasos cortos de la idea al mensaje.",
+      "steps": {
+        "choose": {
+          "title": "Elige tema y destinatario",
+          "body": "Indica de qué se trata y quién debería escucharlo — o deja el destinatario abierto."
+        },
+        "write": {
+          "title": "Escribe tu mensaje",
+          "body": "Describe la situación con tus palabras. Puedes permanecer anónimo o añadir un contacto."
+        },
+        "send": {
+          "title": "Envía de forma segura",
+          "body": "Los mensajes viajan por un canal protegido. El destinatario ve el contenido — no tu rastro técnico."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Privacidad por defecto",
+      "body": "Los envíos anónimos no requieren nombre ni email. Solo los administradores autorizados pueden leer los mensajes. El cliente nunca escribe directamente en la base de datos — solo a través de una función de servidor validada."
+    },
+    "topics": {
+      "title": "Sobre qué puedes escribir",
+      "subtitle": "Cualquier tema que afecte al trabajo y a la cultura del equipo."
+    },
+    "feedback": {
+      "title": "Tu mensaje",
+      "subtitle": "Dos pasos — y tu mensaje queda listo para enviar."
+    }
+  },
+  "form": {
+    "step": "Paso {{current}} de {{total}}",
+    "optional": "opcional",
+    "honeypot": "Dejar en blanco",
+    "next": "Continuar",
+    "back": "Atrás",
+    "submit": "Enviar",
+    "submitting": "Enviando…",
+    "type": {
+      "label": "Tipo de mensaje",
+      "anonymous": "Anónimo",
+      "anonymousHint": "Sin nombre ni contacto",
+      "identified": "Con tu nombre",
+      "identifiedHint": "Puedes recibir respuesta"
+    },
+    "topic": {
+      "label": "Tema",
+      "placeholder": "Elige un tema"
+    },
+    "recipient": {
+      "label": "Destinatario"
+    },
+    "name": {
+      "label": "Nombre"
+    },
+    "nickname": {
+      "label": "Apodo"
+    },
+    "email": {
+      "label": "Email"
+    },
+    "message": {
+      "label": "Mensaje",
+      "placeholder": "Describe la situación con el mayor detalle posible…",
+      "hint": "Mínimo {{min}} caracteres"
+    },
+    "errors": {
+      "type": "Elige un tipo de mensaje",
+      "topic": "Elige un tema",
+      "recipient": "Elige un destinatario",
+      "name": "Introduce tu nombre",
+      "emailRequired": "Introduce tu email",
+      "emailInvalid": "Email no válido",
+      "messageShort": "El mensaje es demasiado corto",
+      "messageLong": "El mensaje es demasiado largo",
+      "submit": {
+        "not_configured": "Firebase aún no está configurado. Añade VITE_FIREBASE_* en .env.",
+        "rate_limited": "Demasiados envíos desde tu red. Inténtalo más tarde.",
+        "invalid": "Revisa los campos e inténtalo de nuevo.",
+        "unavailable": "El servicio no está disponible temporalmente. Inténtalo más tarde.",
+        "unauthenticated": "Sesión caducada. Vuelve a iniciar sesión con Google.",
+        "unknown": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+      }
+    },
+    "success": {
+      "title": "Gracias — mensaje enviado",
+      "body": "Hemos recibido tu mensaje. Si dejaste un contacto, la respuesta llegará a ese email.",
+      "another": "Escribir otro"
+    }
+  },
+  "recipients": {
+    "unspecified": "Sin destinatario concreto",
+    "owner": "Propietario",
+    "ceo": "CEO",
+    "hrd": "Director de HR",
+    "sfo": "Security / Compliance",
+    "tso": "Tech / Operations",
+    "cco": "Customer / Commercial",
+    "cmo": "Marketing / Communications"
+  },
+  "admin": {
+    "title": "TrustBox Admin",
+    "loginTitle": "Acceso de administrador",
+    "loginHint": "La autenticación de Firebase se conectará en la etapa 05.",
+    "dashboard": "Panel",
+    "recipients": "Destinatarios",
+    "unavailable": "El panel de administración aún no está conectado a Firebase."
+  },
+  "common": {
+    "loading": "Cargando…",
+    "notFound": "Página no encontrada",
+    "backHome": "Volver al inicio"
+  },
+  "topics": {
+    "manager_communication": "Comunicación con el responsable",
+    "salary": "Temas financieros y salario",
+    "work_conditions": "Condiciones laborales",
+    "team": "Equipo y colegas",
+    "learning": "Aprendizaje y desarrollo",
+    "ideas": "Ideas y propuestas",
+    "ethics": "Ética e infracciones",
+    "thanks": "Agradecimiento",
+    "other": "Otro"
+  }
+}

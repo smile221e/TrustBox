@@ -1,0 +1,65 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function adminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().role in ['admin', 'super_admin'];
+    }
+
+    function isSuperAdmin() {
+      return isAdmin() && adminDoc().role == 'super_admin';
+    }
+
+    // Feedback: write only via Admin SDK (Cloud Functions). Admins may read/update status.
+    match /feedback/{id} {
+      allow read: if isAdmin();
+      allow create: if false;
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).changedKeys()
+            .hasOnly(['status', 'updatedAt']);
+      allow delete: if isSuperAdmin();
+    }
+
+    // Replies: admin-only (Stage 05/06); no client creates.
+    match /feedbackReplies/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Recipients: admin-only on client. Public resolves via Cloud Functions.
+    match /recipients/{id} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // Admins: self-read; super_admin manages.
+    match /admins/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isSuperAdmin());
+      allow write: if isSuperAdmin();
+    }
+
+    // Rate limits & audit: Functions / super_admin only.
+    match /rateLimits/{id} {
+      allow read, write: if false;
+    }
+
+    match /auditLogs/{id} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
