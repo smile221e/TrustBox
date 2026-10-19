@@ -227,6 +227,14 @@
       "unpublish": "Quitar del sitio",
       "private": "No en el sitio"
     },
+    "comments": {
+      "title": "Comentarios",
+      "empty": "Aún no hay comentarios.",
+      "reply": "Responder",
+      "compose": "Respuesta al comentario",
+      "send": "Enviar respuesta",
+      "cancel": "Cancelar"
+    },
     "errors": {
       "load": "No se pudieron cargar los datos.",
       "save": "No se pudo guardar.",

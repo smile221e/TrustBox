@@ -15,9 +15,11 @@ import { getDb, getFirebaseAuth } from '@/lib/firebase'
 import type { FeedbackStatus, FeedbackType, TopicId } from '@/lib/constants'
 
 export type PublicAnswer = {
+  id: string
   body: string
   adminDisplayName: string
   createdAt: unknown
+  parentCommentId: string | null
 }
 
 export type PublicThread = {
@@ -30,7 +32,10 @@ export type PublicThread = {
   heartCount: number
   commentCount: number
   createdAt: unknown
-  answer: PublicAnswer | null
+  /** Top-level public admin replies (not tied to a comment). */
+  answers: PublicAnswer[]
+  /** Public admin replies nested under a public comment. */
+  commentReplies: PublicAnswer[]
 }
 
 export type PublicComment = {
@@ -59,20 +64,38 @@ export async function listPublicThreads(limitCount = 50): Promise<PublicThread[]
     getDocs(query(collection(getDb(), 'feedbackReplies'), where('isPublic', '==', true))),
   ])
 
-  const answerByFeedback = new Map<string, PublicAnswer>()
+  const answersByFeedback = new Map<string, PublicAnswer[]>()
+  const commentRepliesByFeedback = new Map<string, PublicAnswer[]>()
   for (const d of repliesSnap.docs) {
     const data = d.data()
     const feedbackId = String(data.feedbackId ?? '')
     if (!feedbackId) continue
+    const parentRaw = data.parentCommentId
+    const parentCommentId =
+      typeof parentRaw === 'string' && parentRaw.trim().length > 0 ? parentRaw.trim() : null
     const next: PublicAnswer = {
+      id: d.id,
       body: String(data.body ?? ''),
       adminDisplayName: String(data.adminDisplayName ?? 'Admin'),
       createdAt: data.createdAt,
+      parentCommentId,
     }
-    const prev = answerByFeedback.get(feedbackId)
-    if (!prev || createdAtMs(next.createdAt) >= createdAtMs(prev.createdAt)) {
-      answerByFeedback.set(feedbackId, next)
+    if (parentCommentId) {
+      const list = commentRepliesByFeedback.get(feedbackId) ?? []
+      list.push(next)
+      commentRepliesByFeedback.set(feedbackId, list)
+    } else {
+      const list = answersByFeedback.get(feedbackId) ?? []
+      list.push(next)
+      answersByFeedback.set(feedbackId, list)
     }
+  }
+
+  for (const list of answersByFeedback.values()) {
+    list.sort((a, b) => createdAtMs(a.createdAt) - createdAtMs(b.createdAt))
+  }
+  for (const list of commentRepliesByFeedback.values()) {
+    list.sort((a, b) => createdAtMs(a.createdAt) - createdAtMs(b.createdAt))
   }
 
   const threads: PublicThread[] = feedbackSnap.docs.map((d) => {
@@ -87,7 +110,8 @@ export async function listPublicThreads(limitCount = 50): Promise<PublicThread[]
       heartCount: typeof data.heartCount === 'number' ? data.heartCount : 0,
       commentCount: typeof data.commentCount === 'number' ? data.commentCount : 0,
       createdAt: data.createdAt,
-      answer: answerByFeedback.get(d.id) ?? null,
+      answers: answersByFeedback.get(d.id) ?? [],
+      commentReplies: commentRepliesByFeedback.get(d.id) ?? [],
     }
   })
 

@@ -27,9 +27,14 @@ export type AdminReplyDoc = FeedbackReply & {
   feedbackStatus?: FeedbackStatus
   adminDisplayName?: string
   upvoteCount?: number
+  /** When set, this reply is nested under a public comment. */
+  parentCommentId?: string
 }
 
 function mapReply(id: string, data: Record<string, unknown>): AdminReplyDoc {
+  const parentRaw = data.parentCommentId
+  const parentCommentId =
+    typeof parentRaw === 'string' && parentRaw.trim().length > 0 ? parentRaw.trim() : undefined
   return {
     id,
     feedbackId: String(data.feedbackId ?? ''),
@@ -45,6 +50,7 @@ function mapReply(id: string, data: Record<string, unknown>): AdminReplyDoc {
     feedbackStatus: data.feedbackStatus as FeedbackStatus | undefined,
     adminDisplayName: data.adminDisplayName as string | undefined,
     upvoteCount: typeof data.upvoteCount === 'number' ? data.upvoteCount : 0,
+    parentCommentId,
     createdAt: data.createdAt as Timestamp | undefined,
   }
 }
@@ -78,12 +84,14 @@ export async function createReply(input: {
   authorKind: FeedbackType
   authorName: string | null
   feedbackStatus: FeedbackStatus
+  parentCommentId?: string | null
 }): Promise<string> {
   const user = getFirebaseAuth().currentUser
   if (!user?.email) throw new Error('unauthenticated')
 
   const adminDisplayName =
     user.displayName?.trim() || user.email.trim().toLowerCase().split('@')[0] || 'Admin'
+  const parentCommentId = (input.parentCommentId ?? '').trim()
 
   const ref = await addDoc(collection(getDb(), 'feedbackReplies'), {
     feedbackId: input.feedbackId,
@@ -101,6 +109,7 @@ export async function createReply(input: {
     feedbackStatus: input.feedbackStatus,
     adminDisplayName,
     upvoteCount: 0,
+    parentCommentId,
     createdAt: serverTimestamp(),
   })
 

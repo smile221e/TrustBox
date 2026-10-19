@@ -202,7 +202,9 @@ service cloud.firestore {
         && request.resource.data.feedbackStatus in ['new', 'in_progress', 'closed']
         && request.resource.data.adminDisplayName is string
         && request.resource.data.upvoteCount is int
-        && request.resource.data.upvoteCount == 0;
+        && request.resource.data.upvoteCount == 0
+        && request.resource.data.parentCommentId is string
+        && request.resource.data.parentCommentId.size() <= 128;
 
       allow update: if isAdmin()
           && request.resource.data.diff(resource.data).changedKeys()

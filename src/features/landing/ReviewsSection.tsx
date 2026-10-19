@@ -15,6 +15,7 @@ import {
   listMyHeartedIds,
   listPublicThreads,
   toggleFeedbackHeart,
+  type PublicAnswer,
   type PublicComment,
   type PublicThread,
 } from '@/lib/api/publicWall'
@@ -127,25 +128,46 @@ function CommentsAccordion({
 
           {!loading && comments.length > 0 && (
             <ul className="space-y-3">
-              {comments.map((c) => (
-                <li key={c.id} className="flex gap-3">
-                  <div
-                    className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/15 text-xs font-semibold text-[var(--color-primary)]"
-                    aria-hidden
-                  >
-                    {c.name.slice(0, 1).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1 rounded-2xl bg-[var(--color-card)] px-3 py-2 ring-1 ring-[var(--color-border)]/50">
-                    <p className="text-xs font-medium">
-                      {c.name}
-                      <span className="ml-2 font-normal text-[var(--color-muted-foreground)]">
-                        {c.email}
-                      </span>
-                    </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{c.body}</p>
-                  </div>
-                </li>
-              ))}
+              {comments.map((c) => {
+                const nested = thread.commentReplies.filter((r) => r.parentCommentId === c.id)
+                return (
+                  <li key={c.id} className="space-y-2">
+                    <div className="flex gap-3">
+                      <div
+                        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/15 text-xs font-semibold text-[var(--color-primary)]"
+                        aria-hidden
+                      >
+                        {c.name.slice(0, 1).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1 rounded-2xl bg-[var(--color-card)] px-3 py-2 ring-1 ring-[var(--color-border)]/50">
+                        <p className="text-xs font-medium">
+                          {c.name}
+                          <span className="ml-2 font-normal text-[var(--color-muted-foreground)]">
+                            {c.email}
+                          </span>
+                        </p>
+                        <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{c.body}</p>
+                      </div>
+                    </div>
+                    {nested.length > 0 && (
+                      <ul className="ml-11 space-y-2 border-l-2 border-[var(--color-primary)]/25 pl-3">
+                        {nested.map((r) => (
+                          <li
+                            key={r.id}
+                            className="rounded-xl bg-[var(--color-muted)]/45 px-3 py-2 dark:bg-[var(--color-muted)]/35"
+                          >
+                            <p className="text-xs font-medium text-[var(--color-primary)]">
+                              {r.adminDisplayName || t('landing.reviews.admin')}
+                              <span className="text-[var(--color-muted-foreground)]"> · Admin</span>
+                            </p>
+                            <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{r.body}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                )
+              })}
             </ul>
           )}
 
@@ -282,16 +304,23 @@ function AnswerCard({
             {thread.question}
           </h3>
 
-          {thread.answer && (
-            <div className="rounded-xl bg-[var(--color-muted)]/45 px-3.5 py-3 dark:bg-[var(--color-muted)]/35">
-              <p className="text-xs font-medium text-[var(--color-primary)]">
-                {thread.answer.adminDisplayName || t('landing.reviews.admin')}
-                <span className="text-[var(--color-muted-foreground)]"> · Admin</span>
-              </p>
-              <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-foreground)]">
-                {thread.answer.body}
-              </p>
-            </div>
+          {thread.answers.length > 0 && (
+            <ul className="space-y-2">
+              {thread.answers.map((answer: PublicAnswer) => (
+                <li
+                  key={answer.id}
+                  className="rounded-xl bg-[var(--color-muted)]/45 px-3.5 py-3 dark:bg-[var(--color-muted)]/35"
+                >
+                  <p className="text-xs font-medium text-[var(--color-primary)]">
+                    {answer.adminDisplayName || t('landing.reviews.admin')}
+                    <span className="text-[var(--color-muted-foreground)]"> · Admin</span>
+                  </p>
+                  <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-foreground)]">
+                    {answer.body}
+                  </p>
+                </li>
+              ))}
+            </ul>
           )}
 
           <div className="flex items-center gap-3 pt-1 text-xs text-[var(--color-muted-foreground)]">
