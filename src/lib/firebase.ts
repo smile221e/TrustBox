@@ -1,7 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app'
 import { connectAuthEmulator, getAuth, type Auth } from 'firebase/auth'
 import { connectFirestoreEmulator, getFirestore, type Firestore } from 'firebase/firestore'
-import { connectFunctionsEmulator, getFunctions, type Functions } from 'firebase/functions'
 
 import { isFirebaseConfigured } from '@/lib/env'
 
@@ -19,7 +18,6 @@ export { isFirebaseConfigured }
 let app: FirebaseApp | null = null
 let auth: Auth | null = null
 let db: Firestore | null = null
-let functions: Functions | null = null
 let emulatorsConnected = false
 
 function ensureClients() {
@@ -38,15 +36,10 @@ function ensureClients() {
   if (!db) {
     db = getFirestore(app)
   }
-  if (!functions) {
-    const region = import.meta.env.VITE_FIREBASE_FUNCTIONS_REGION || 'europe-west1'
-    functions = getFunctions(app, region)
-  }
 
   if (!emulatorsConnected && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
     connectFirestoreEmulator(db, '127.0.0.1', 8080)
-    connectFunctionsEmulator(functions, '127.0.0.1', 5001)
     emulatorsConnected = true
   }
 }
@@ -65,9 +58,4 @@ export function getFirebaseAuth(): Auth {
 export function getDb(): Firestore {
   ensureClients()
   return db!
-}
-
-export function getFirebaseFunctions(): Functions {
-  ensureClients()
-  return functions!
 }
