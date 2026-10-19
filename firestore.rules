@@ -137,27 +137,29 @@ service cloud.firestore {
             && request.resource.data.commentCount
                 == intField(resource.data, 'commentCount') + 1);
 
-      allow delete: if isSuperAdmin();
+      allow delete: if isAdmin();
     }
 
     match /feedbackHearts/{id} {
-      allow read: if corporateEmail()
-        && (!exists(/databases/$(database)/documents/feedbackHearts/$(id))
-            || resource.data.uid == request.auth.uid);
+      allow read: if isAdmin()
+        || (corporateEmail()
+            && (!exists(/databases/$(database)/documents/feedbackHearts/$(id))
+                || resource.data.uid == request.auth.uid));
 
       allow create: if corporateEmail()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.feedbackId is string
         && id == request.resource.data.feedbackId + '_' + request.auth.uid;
 
-      allow delete: if corporateEmail()
-        && resource.data.uid == request.auth.uid;
+      allow delete: if isAdmin()
+        || (corporateEmail() && resource.data.uid == request.auth.uid);
     }
 
     match /feedbackComments/{id} {
-      allow read: if corporateEmail()
-        && exists(/databases/$(database)/documents/feedback/$(resource.data.feedbackId))
-        && get(/databases/$(database)/documents/feedback/$(resource.data.feedbackId)).data.allowPublicReply == true;
+      allow read: if isAdmin()
+        || (corporateEmail()
+            && exists(/databases/$(database)/documents/feedback/$(resource.data.feedbackId))
+            && get(/databases/$(database)/documents/feedback/$(resource.data.feedbackId)).data.allowPublicReply == true);
 
       allow create: if corporateEmail()
         && request.resource.data.feedbackId is string
@@ -174,7 +176,7 @@ service cloud.firestore {
         && request.resource.data.body.size() <= 2000
         && request.resource.data.createdByUid == request.auth.uid;
 
-      allow update, delete: if isSuperAdmin();
+      allow update, delete: if isAdmin();
     }
 
     match /feedbackReplies/{id} {
@@ -216,7 +218,7 @@ service cloud.firestore {
             && (request.resource.data.upvoteCount == resource.data.upvoteCount + 1
                 || request.resource.data.upvoteCount == resource.data.upvoteCount - 1));
 
-      allow delete: if isSuperAdmin();
+      allow delete: if isAdmin();
     }
 
     match /replyVotes/{id} {

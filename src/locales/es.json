@@ -176,6 +176,8 @@
     "recipientsAdd": "Añadir destinatario",
     "recipientsDeleteConfirm": "¿Eliminar este destinatario?",
     "delete": "Eliminar",
+    "deleteFeedback": "Eliminar mensaje",
+    "deleteFeedbackConfirm": "¿Eliminar este mensaje junto con respuestas y comentarios?",
     "adminsHint": "Añade un email corporativo — los permisos de admin aplican de inmediato (no se envía invitación).",
     "noAdmins": "Aún no hay otros admins.",
     "addLabel": "Email del nuevo admin",

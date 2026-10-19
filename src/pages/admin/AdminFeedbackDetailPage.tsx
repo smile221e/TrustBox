@@ -1,7 +1,7 @@
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle, Trash2 } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { AdminNav } from '@/features/admin/AdminNav'
 import { RequireAdmin } from '@/features/admin/RequireAdmin'
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import {
+  deleteFeedback,
   formatFeedbackDate,
   getFeedback,
   updateFeedbackStatus,
@@ -24,6 +25,7 @@ import { FEEDBACK_STATUSES, type FeedbackStatus } from '@/lib/constants'
 
 function DetailInner() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { id = '' } = useParams()
   const [item, setItem] = useState<AdminFeedbackDoc | null>(null)
   const [replies, setReplies] = useState<AdminReplyDoc[]>([])
@@ -70,6 +72,22 @@ function DetailInner() {
     } catch {
       setError(t('admin.errors.save'))
     } finally {
+      setSaving(false)
+    }
+  }
+
+  const onDelete = async () => {
+    if (!item) return
+    if (!window.confirm(t('admin.deleteFeedbackConfirm'))) return
+    setSaving(true)
+    setError(null)
+    try {
+      await deleteFeedback(item.id)
+      navigate('/admin/dashboard', { replace: true })
+    } catch (err) {
+      const detail =
+        err && typeof err === 'object' && 'message' in err ? String((err as Error).message) : ''
+      setError(detail ? `${t('admin.errors.save')} (${detail})` : t('admin.errors.save'))
       setSaving(false)
     }
   }
@@ -159,7 +177,20 @@ function DetailInner() {
             {t(`topics.${item.topicId}`)}
           </h1>
         </div>
-        <AdminNav />
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            disabled={saving}
+            className="text-[var(--color-destructive)]"
+            onClick={() => void onDelete()}
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('admin.deleteFeedback')}
+          </Button>
+          <AdminNav />
+        </div>
       </div>
 
       {error && <p className="text-sm text-[var(--color-destructive)]">{error}</p>}

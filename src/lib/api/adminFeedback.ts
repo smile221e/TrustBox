@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -7,6 +8,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
   type Timestamp,
 } from 'firebase/firestore'
 
@@ -57,6 +59,25 @@ export async function updateFeedbackStatus(id: string, status: FeedbackStatus): 
     status,
     updatedAt: serverTimestamp(),
   })
+}
+
+/** Deletes feedback and related replies / comments / hearts (best-effort cascade). */
+export async function deleteFeedback(id: string): Promise<void> {
+  const db = getDb()
+
+  const [replies, comments, hearts] = await Promise.all([
+    getDocs(query(collection(db, 'feedbackReplies'), where('feedbackId', '==', id))),
+    getDocs(query(collection(db, 'feedbackComments'), where('feedbackId', '==', id))),
+    getDocs(query(collection(db, 'feedbackHearts'), where('feedbackId', '==', id))),
+  ])
+
+  await Promise.all([
+    ...replies.docs.map((d) => deleteDoc(d.ref)),
+    ...comments.docs.map((d) => deleteDoc(d.ref)),
+    ...hearts.docs.map((d) => deleteDoc(d.ref)),
+  ])
+
+  await deleteDoc(doc(db, 'feedback', id))
 }
 
 export function formatFeedbackDate(value: unknown): string {

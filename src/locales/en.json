@@ -176,6 +176,8 @@
     "recipientsAdd": "Add recipient",
     "recipientsDeleteConfirm": "Delete this recipient?",
     "delete": "Delete",
+    "deleteFeedback": "Delete feedback",
+    "deleteFeedbackConfirm": "Delete this feedback along with replies and comments?",
     "adminsHint": "Add a corporate email — admin rights apply immediately (no invite email is sent).",
     "noAdmins": "No other admins yet.",
     "addLabel": "New admin email",
