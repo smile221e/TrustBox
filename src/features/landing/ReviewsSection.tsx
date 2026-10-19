@@ -156,8 +156,13 @@ export function ReviewsSection() {
         if (cancelled) return
         setItems(data)
         setFailed(false)
-        const voted = await listMyUpvotedReplyIds(data.map((d) => d.id))
-        if (!cancelled) setVotedIds(voted)
+        // Votes are optional — never fail the whole Answers section if vote reads fail.
+        try {
+          const voted = await listMyUpvotedReplyIds(data.map((d) => d.id))
+          if (!cancelled) setVotedIds(voted)
+        } catch {
+          if (!cancelled) setVotedIds(new Set())
+        }
       } catch {
         if (!cancelled) {
           setItems([])

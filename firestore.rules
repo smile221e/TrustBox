@@ -163,8 +163,10 @@ service cloud.firestore {
     }
 
     match /replyVotes/{id} {
+      // Allow get on missing docs (vote check); existing votes only by owner.
       allow read: if corporateEmail()
-        && resource.data.uid == request.auth.uid;
+        && (!exists(/databases/$(database)/documents/replyVotes/$(id))
+            || resource.data.uid == request.auth.uid);
 
       allow create: if corporateEmail()
         && request.resource.data.uid == request.auth.uid

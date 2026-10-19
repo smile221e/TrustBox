@@ -54,9 +54,18 @@ export function AppShell() {
                   <SectionLink sectionId="privacy">{t('landing.nav.privacy')}</SectionLink>
                 </Button>
                 <Button asChild variant="ghost" size="sm">
+                  <SectionLink sectionId="reviews">{t('landing.reviews.title')}</SectionLink>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
                   <SectionLink sectionId="feedback">{t('landing.cta')}</SectionLink>
                 </Button>
               </nav>
+            )}
+
+            {isAdminRoute && (
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/">{t('common.backHome')}</Link>
+              </Button>
             )}
 
             {showAdminLink && !isAdminRoute && (

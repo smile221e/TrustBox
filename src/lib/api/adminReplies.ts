@@ -197,8 +197,12 @@ export async function listMyUpvotedReplyIds(replyIds: string[]): Promise<Set<str
 
   await Promise.all(
     replyIds.map(async (id) => {
-      const snap = await getDoc(doc(getDb(), 'replyVotes', voteDocId(id, user.uid)))
-      if (snap.exists()) voted.add(id)
+      try {
+        const snap = await getDoc(doc(getDb(), 'replyVotes', voteDocId(id, user.uid)))
+        if (snap.exists()) voted.add(id)
+      } catch {
+        // Missing-doc / rules edge cases must not break the Answers wall.
+      }
     }),
   )
   return voted
