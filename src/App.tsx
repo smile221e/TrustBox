@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { AccessGate } from '@/features/access/AccessGate'
 import { useAccess } from '@/hooks/useAccess'
 import { AccessProvider } from '@/providers/AccessProvider'
+import { AdminProvider } from '@/providers/AdminProvider'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { AppRoutes } from '@/routes'
@@ -33,9 +34,11 @@ function GatedApp() {
   }
 
   return (
-    <HashRouter>
-      <AppRoutes />
-    </HashRouter>
+    <AdminProvider>
+      <HashRouter>
+        <AppRoutes />
+      </HashRouter>
+    </AdminProvider>
   )
 }
 

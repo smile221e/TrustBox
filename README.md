@@ -116,16 +116,16 @@ Spark (безкоштовний план) достатньо: логін Google 
 | Landing UI / Motion / shadcn | ✅ Етап 02 |
 | Feedback form | ✅ Етап 03 |
 | Google auth (@221e.space) + Firestore submit | ✅ Етап 04 |
-| Admin auth / CRUD | ⏳ Етап 05 |
-| Email (Resend) + E2E | ⏳ Етап 06 |
+| Admin panel + public reviews | ✅ Етап 05 |
+| Rocket Chat notify + polish | ⏳ Етап 06 |
 
 ## План етапів
 
 1. **01** — ініціалізація, структура, конфіги
 2. **02** — клієнтський дизайн landing
 3. **03** — двокрокова форма
-4. **04** — Firebase API, rules, антиспам *(поточний)*
-5. **05** — адмінпанель
-6. **06** — email, тести, деплой
+4. **04** — Firebase API, rules, антиспам
+5. **05** — адмінпанель *(поточний)*
+6. **06** — Rocket Chat / email, тести
 
 Не переходьте до наступного етапу без підтвердження після перевірки поточного.

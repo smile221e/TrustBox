@@ -34,5 +34,11 @@ GitHub Pages builds with repository secrets `VITE_FIREBASE_*`.
 1. Sign in with Google
 2. Email must be `@221e.space`
 3. Submit writes to `feedback` in Firestore
+4. `smile@221e.space` auto-claims **super_admin** on first `/#/admin` visit
+5. Super admin invites other admins by email in **Admins**
 
-Optional Cloud Functions / PeopleForce remain in `functions/` for a future upgrade, but are **not required**.
+## Indexes
+
+When Console asks for a composite index (feedback replies / public reviews), create it from the error link, or deploy `firestore.indexes.json`.
+
+Optional Cloud Functions remain in `functions/` for a future upgrade (Rocket Chat), but are **not required**.

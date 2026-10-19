@@ -22,6 +22,7 @@ describe('submitFeedback', () => {
         recipientId: 'hrd',
         language: 'uk',
         accessEmail: 'user@221e.space',
+        allowPublicReply: false,
       }),
     ).rejects.toMatchObject({
       name: 'SubmitFeedbackError',

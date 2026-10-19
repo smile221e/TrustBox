@@ -77,6 +77,10 @@
     "feedback": {
       "title": "Your message",
       "subtitle": "Two steps — and your feedback is ready to send."
+    },
+    "reviews": {
+      "title": "Team replies",
+      "subtitle": "Public replies that authors allowed us to share."
     }
   },
   "form": {
@@ -115,6 +119,7 @@
       "placeholder": "Describe the situation as specifically as you can…",
       "hint": "At least {{min}} characters"
     },
+    "allowPublicReply": "Allow showing the reply in the on-site reviews section (without your name if anonymous).",
     "errors": {
       "type": "Choose a feedback type",
       "topic": "Choose a topic",
@@ -151,15 +156,69 @@
   "admin": {
     "title": "TrustBox Admin",
     "loginTitle": "Admin sign-in",
-    "loginHint": "Firebase authentication will be wired in stage 05.",
-    "dashboard": "Dashboard",
+    "loginHint": "Only invited administrators (@221e.space) have access.",
+    "denied": "This account does not have admin rights.",
+    "dashboard": "Feedback",
     "recipients": "Recipients",
-    "unavailable": "Admin panel is not connected to Firebase yet."
+    "admins": "Admins",
+    "recipientsHint": "Recipient emails will be used for notifications (Rocket Chat later).",
+    "adminsHint": "Invite a colleague by corporate email. Rights appear after they sign in.",
+    "activeAdmins": "Active",
+    "pendingInvites": "Invites",
+    "noInvites": "No pending invites.",
+    "inviteLabel": "New admin email",
+    "invite": "Invite",
+    "revoke": "Revoke",
+    "save": "Save",
+    "empty": "No feedback yet.",
+    "anonymous": "Anonymous",
+    "identified": "Named",
+    "stats": {
+      "total": "Total",
+      "new": "New",
+      "closed": "Closed"
+    },
+    "filters": {
+      "all": "All",
+      "new": "New",
+      "in_progress": "In progress",
+      "closed": "Closed"
+    },
+    "status": {
+      "new": "New",
+      "in_progress": "In progress",
+      "closed": "Closed"
+    },
+    "fields": {
+      "status": "Status",
+      "type": "Type",
+      "date": "Date",
+      "name": "Name",
+      "active": "Active",
+      "publicOptIn": "Allowed public reply"
+    },
+    "replies": {
+      "title": "Replies",
+      "empty": "No replies yet.",
+      "compose": "Reply text",
+      "send": "Send reply",
+      "sending": "Sending…",
+      "public": "On site",
+      "publishHint": "Publish this reply in the on-site reviews section"
+    },
+    "errors": {
+      "load": "Could not load data.",
+      "save": "Could not save.",
+      "notFound": "Feedback not found.",
+      "domain": "Only @221e.space emails."
+    }
   },
   "common": {
     "loading": "Loading…",
     "notFound": "Page not found",
-    "backHome": "Back home"
+    "backHome": "Back home",
+    "yes": "Yes",
+    "no": "No"
   },
   "topics": {
     "manager_communication": "Manager communication",

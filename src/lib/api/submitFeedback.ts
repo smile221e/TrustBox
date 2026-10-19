@@ -88,6 +88,7 @@ export async function submitFeedback(
       status: 'new',
       language: input.language,
       accessEmail,
+      allowPublicReply: Boolean(input.allowPublicReply),
       createdByUid: user.uid,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

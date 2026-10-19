@@ -9,8 +9,10 @@ export interface FeedbackSubmissionInput {
   message: string
   recipientId: string
   language: AppLanguage
-  /** Gate email — must be @221e.space (enforced client + Functions) */
+  /** Gate email — must be @221e.space */
   accessEmail: string
+  /** Author allows publishing the admin reply on the public reviews wall */
+  allowPublicReply: boolean
   /** Honeypot field — must stay empty */
   website?: string
 }
@@ -27,6 +29,7 @@ export interface FeedbackDocument {
   recipientName: string
   status: FeedbackStatus
   language: AppLanguage
+  allowPublicReply?: boolean
   createdAt: unknown
   updatedAt: unknown
 }
@@ -38,5 +41,7 @@ export interface FeedbackReply {
   sentByAdminId: string
   sentByEmail: string
   deliveryStatus: 'queued' | 'accepted' | 'failed'
+  isPublic?: boolean
+  topicId?: string
   createdAt: unknown
 }

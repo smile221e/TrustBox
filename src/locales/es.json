@@ -77,6 +77,10 @@
     "feedback": {
       "title": "Tu mensaje",
       "subtitle": "Dos pasos — y tu mensaje queda listo para enviar."
+    },
+    "reviews": {
+      "title": "Respuestas del equipo",
+      "subtitle": "Respuestas públicas que los autores permitieron compartir."
     }
   },
   "form": {
@@ -115,6 +119,7 @@
       "placeholder": "Describe la situación con el mayor detalle posible…",
       "hint": "Mínimo {{min}} caracteres"
     },
+    "allowPublicReply": "Permitir mostrar la respuesta en la sección de reseñas del sitio (sin tu nombre si es anónimo).",
     "errors": {
       "type": "Elige un tipo de mensaje",
       "topic": "Elige un tema",
@@ -151,15 +156,69 @@
   "admin": {
     "title": "TrustBox Admin",
     "loginTitle": "Acceso de administrador",
-    "loginHint": "La autenticación de Firebase se conectará en la etapa 05.",
-    "dashboard": "Panel",
+    "loginHint": "Solo administradores invitados (@221e.space) tienen acceso.",
+    "denied": "Esta cuenta no tiene permisos de administrador.",
+    "dashboard": "Mensajes",
     "recipients": "Destinatarios",
-    "unavailable": "El panel de administración aún no está conectado a Firebase."
+    "admins": "Admins",
+    "recipientsHint": "Los emails de destinatarios se usarán para notificaciones (Rocket Chat más adelante).",
+    "adminsHint": "Invita a un colega por email corporativo. Los permisos aparecen tras iniciar sesión.",
+    "activeAdmins": "Activos",
+    "pendingInvites": "Invitaciones",
+    "noInvites": "No hay invitaciones pendientes.",
+    "inviteLabel": "Email del nuevo admin",
+    "invite": "Invitar",
+    "revoke": "Revocar",
+    "save": "Guardar",
+    "empty": "Aún no hay mensajes.",
+    "anonymous": "Anónimo",
+    "identified": "Con nombre",
+    "stats": {
+      "total": "Total",
+      "new": "Nuevos",
+      "closed": "Cerrados"
+    },
+    "filters": {
+      "all": "Todos",
+      "new": "Nuevos",
+      "in_progress": "En curso",
+      "closed": "Cerrados"
+    },
+    "status": {
+      "new": "Nuevo",
+      "in_progress": "En curso",
+      "closed": "Cerrado"
+    },
+    "fields": {
+      "status": "Estado",
+      "type": "Tipo",
+      "date": "Fecha",
+      "name": "Nombre",
+      "active": "Activo",
+      "publicOptIn": "Permitió respuesta pública"
+    },
+    "replies": {
+      "title": "Respuestas",
+      "empty": "Aún no hay respuestas.",
+      "compose": "Texto de la respuesta",
+      "send": "Enviar respuesta",
+      "sending": "Enviando…",
+      "public": "En el sitio",
+      "publishHint": "Publicar esta respuesta en la sección de reseñas del sitio"
+    },
+    "errors": {
+      "load": "No se pudieron cargar los datos.",
+      "save": "No se pudo guardar.",
+      "notFound": "Mensaje no encontrado.",
+      "domain": "Solo emails @221e.space."
+    }
   },
   "common": {
     "loading": "Cargando…",
     "notFound": "Página no encontrada",
-    "backHome": "Volver al inicio"
+    "backHome": "Volver al inicio",
+    "yes": "Sí",
+    "no": "No"
   },
   "topics": {
     "manager_communication": "Comunicación con el responsable",

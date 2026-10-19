@@ -6,6 +6,7 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { SectionLink } from '@/components/SectionLink'
 import { Button } from '@/components/ui/button'
 import { useAccess } from '@/hooks/useAccess'
+import { useAdmin } from '@/hooks/useAdmin'
 import { useTheme } from '@/hooks/useTheme'
 import { SUPPORTED_LANGUAGES, type AppLanguage } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -14,8 +15,10 @@ export function AppShell() {
   const { t, i18n } = useTranslation()
   const { theme, toggleTheme } = useTheme()
   const { lock } = useAccess()
+  const { isAdmin } = useAdmin()
   const location = useLocation()
   const isLanding = location.pathname === '/'
+  const isAdminRoute = location.pathname.startsWith('/admin')
 
   const changeLanguage = (lng: AppLanguage) => {
     void i18n.changeLanguage(lng)
@@ -53,6 +56,12 @@ export function AppShell() {
                   <SectionLink sectionId="feedback">{t('landing.cta')}</SectionLink>
                 </Button>
               </nav>
+            )}
+
+            {isAdmin && !isAdminRoute && (
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/admin/dashboard">{t('nav.admin')}</Link>
+              </Button>
             )}
 
             <div

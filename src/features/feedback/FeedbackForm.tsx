@@ -366,6 +366,16 @@ export function FeedbackForm() {
             </div>
           </div>
 
+          <label className="flex items-start gap-2.5 text-sm leading-snug">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={values.allowPublicReply}
+              onChange={(e) => setField('allowPublicReply', e.target.checked)}
+            />
+            <span>{t('form.allowPublicReply')}</span>
+          </label>
+
           {submitError && (
             <p className="text-sm text-[var(--color-danger)]" role="alert">
               {submitError}

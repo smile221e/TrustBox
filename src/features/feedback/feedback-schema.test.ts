@@ -57,6 +57,7 @@ describe('feedback-schema', () => {
       recipientId: 'ceo',
       language: 'uk',
       accessEmail: 'user@221e.space',
+      allowPublicReply: false,
     })
     expect(payload?.name).toBeUndefined()
   })

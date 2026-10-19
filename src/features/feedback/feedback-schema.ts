@@ -19,6 +19,8 @@ export type FeedbackFormValues = {
   nickname: string
   email: string
   message: string
+  /** Allow publishing the admin reply on the site reviews section */
+  allowPublicReply: boolean
   /** Honeypot — bots fill this; humans must leave empty */
   website: string
 }
@@ -33,6 +35,7 @@ export const INITIAL_FEEDBACK_VALUES: FeedbackFormValues = {
   nickname: '',
   email: '',
   message: '',
+  allowPublicReply: false,
   website: '',
 }
 
@@ -105,6 +108,7 @@ export function toSubmissionInput(
     recipientId: values.recipientId,
     language,
     accessEmail,
+    allowPublicReply: values.allowPublicReply,
     website: values.website,
   }
 
