@@ -101,14 +101,20 @@ Callable: `submitFeedback` (honeypot + rate limit + validation + Firestore write
 
 ## GitHub Pages
 
-Workflow: `.github/workflows/deploy.yml`.
+Workflow: `.github/workflows/deploy.yml` → після push у `main`:
 
-1. Увімкнути Pages (Source: GitHub Actions).
-2. Додати repository secrets `VITE_FIREBASE_*`.
-3. Push у `main`.
-4. Відкрити `https://<user>.github.io/<repo>/#/`.
+`https://kyryloyakymchuck.github.io/trustbox/#/`
 
-`VITE_BASE_PATH` за замовчуванням `/trustbox/` — змініть під назву репозиторію або на `/` для custom domain.
+Перед тестом продакшену:
+
+1. Firebase Authentication → Google увімкнено.
+2. Authorized domains: `localhost` + `kyryloyakymchuck.github.io`.
+3. Repository secrets `VITE_FIREBASE_*` (уже для CI).
+4. Cloud Functions (потрібен план **Blaze**):  
+   `npx firebase-tools login` → `npx firebase-tools deploy --only firestore:rules,firestore:indexes,functions`  
+   з `PEOPLEFORCE_API_KEY` у `functions/.env`.
+
+Без Functions Google-вхід на Pages не пройде PeopleForce-перевірку.
 
 ## Статус інтеграцій
 
