@@ -8,29 +8,23 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
-  inviteAdmin,
-  listAdminInvites,
-  listAdmins,
-  revokeInvite,
-  type AdminInvite,
-} from '@/lib/api/adminInvites'
-import type { AdminRole } from '@/lib/constants'
+  addAdminByEmail,
+  listAdminDirectory,
+  removeAdminByEmail,
+  type AdminListItem,
+} from '@/lib/api/adminEmails'
+import { BOOTSTRAP_SUPER_ADMIN_EMAIL } from '@/lib/admin-bootstrap'
 
 function AdminsInner() {
   const { t } = useTranslation()
-  const [admins, setAdmins] = useState<
-    Array<{ uid: string; email: string; displayName: string; role: AdminRole }>
-  >([])
-  const [invites, setInvites] = useState<AdminInvite[]>([])
+  const [items, setItems] = useState<AdminListItem[]>([])
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const reload = async () => {
-    const [a, i] = await Promise.all([listAdmins(), listAdminInvites()])
-    setAdmins(a)
-    setInvites(i)
+    setItems(await listAdminDirectory())
   }
 
   useEffect(() => {
@@ -50,12 +44,12 @@ function AdminsInner() {
     }
   }, [t])
 
-  const onInvite = async (event: FormEvent) => {
+  const onAdd = async (event: FormEvent) => {
     event.preventDefault()
     setSaving(true)
     setError(null)
     try {
-      await inviteAdmin(email, 'admin')
+      await addAdminByEmail(email, 'admin')
       setEmail('')
       await reload()
     } catch (err) {
@@ -64,6 +58,21 @@ function AdminsInner() {
           ? t('admin.errors.domain')
           : t('admin.errors.save'),
       )
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const onRemove = async (target: string) => {
+    if (target === BOOTSTRAP_SUPER_ADMIN_EMAIL) return
+    if (!window.confirm(t('admin.removeConfirm', { email: target }))) return
+    setSaving(true)
+    setError(null)
+    try {
+      await removeAdminByEmail(target)
+      await reload()
+    } catch {
+      setError(t('admin.errors.save'))
     } finally {
       setSaving(false)
     }
@@ -89,58 +98,40 @@ function AdminsInner() {
         </p>
       )}
 
-      <div className="space-y-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-          {t('admin.activeAdmins')}
-        </h2>
-        <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-          {admins.map((a) => (
-            <li key={a.uid} className="flex items-center justify-between gap-3 py-3 text-sm">
-              <span>
-                {a.email}
-                {a.displayName && a.displayName !== a.email ? ` · ${a.displayName}` : ''}
-              </span>
-              <span className="text-xs text-[var(--color-muted-foreground)]">{a.role}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="space-y-3">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-          {t('admin.pendingInvites')}
-        </h2>
-        <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-          {invites.length === 0 && (
-            <li className="py-4 text-sm text-[var(--color-muted-foreground)]">{t('admin.noInvites')}</li>
-          )}
-          {invites.map((inv) => (
-            <li key={inv.email} className="flex items-center justify-between gap-3 py-3 text-sm">
-              <span>
-                {inv.email} · {inv.role}
-              </span>
+      <ul className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+        {items.length === 0 && !loading && (
+          <li className="py-4 text-sm text-[var(--color-muted-foreground)]">{t('admin.noAdmins')}</li>
+        )}
+        {items.map((a) => (
+          <li key={a.email} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+            <div>
+              <p className="font-medium">{a.email}</p>
+              <p className="text-xs text-[var(--color-muted-foreground)]">
+                {a.role}
+                {a.displayName ? ` · ${a.displayName}` : ''}
+                {a.active ? ` · ${t('admin.signedInOnce')}` : ` · ${t('admin.pendingSignIn')}`}
+              </p>
+            </div>
+            {a.email !== BOOTSTRAP_SUPER_ADMIN_EMAIL && (
               <Button
                 type="button"
                 size="sm"
                 variant="secondary"
-                onClick={() =>
-                  void revokeInvite(inv.email)
-                    .then(reload)
-                    .catch(() => setError(t('admin.errors.save')))
-                }
+                disabled={saving}
+                onClick={() => void onRemove(a.email)}
               >
-                {t('admin.revoke')}
+                {t('admin.remove')}
               </Button>
-            </li>
-          ))}
-        </ul>
-      </div>
+            )}
+          </li>
+        ))}
+      </ul>
 
-      <form onSubmit={(e) => void onInvite(e)} className="space-y-3">
+      <form onSubmit={(e) => void onAdd(e)} className="space-y-3">
         <div className="space-y-1.5">
-          <Label htmlFor="invite-email">{t('admin.inviteLabel')}</Label>
+          <Label htmlFor="add-admin-email">{t('admin.addLabel')}</Label>
           <Input
-            id="invite-email"
+            id="add-admin-email"
             type="email"
             required
             value={email}
@@ -149,7 +140,7 @@ function AdminsInner() {
           />
         </div>
         <Button type="submit" disabled={saving || !email.trim()}>
-          {saving ? t('common.loading') : t('admin.invite')}
+          {saving ? t('common.loading') : t('admin.add')}
         </Button>
       </form>
     </section>
