@@ -8,6 +8,7 @@ export interface FeedbackSubmissionInput {
   topicId: TopicId
   message: string
   recipientId: string
+  recipientName: string
   language: AppLanguage
   /** Gate email — must be @221e.space */
   accessEmail: string

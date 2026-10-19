@@ -223,7 +223,7 @@ function DetailInner() {
               maxLength={4000}
             />
           </div>
-          {item.allowPublicReply && (
+          {item.allowPublicReply ? (
             <label className="flex items-start gap-2 text-sm">
               <input
                 type="checkbox"
@@ -233,6 +233,10 @@ function DetailInner() {
               />
               <span>{t('admin.replies.publishHint')}</span>
             </label>
+          ) : (
+            <p className="text-xs text-[var(--color-muted-foreground)]">
+              {t('admin.replies.noPublicOptIn')}
+            </p>
           )}
           <Button type="submit" disabled={saving || replyBody.trim().length < 2}>
             {saving ? t('admin.replies.sending') : t('admin.replies.send')}

@@ -80,7 +80,9 @@
     },
     "reviews": {
       "title": "Team replies",
-      "subtitle": "Public replies that authors allowed us to share."
+      "subtitle": "Public replies after the author opts in and an admin publishes.",
+      "empty": "No published replies yet. They appear here when an admin publishes a reply to feedback with author permission.",
+      "error": "Could not load replies. Try refreshing the page."
     }
   },
   "form": {
@@ -119,7 +121,8 @@
       "placeholder": "Describe the situation as specifically as you can…",
       "hint": "At least {{min}} characters"
     },
-    "allowPublicReply": "Allow showing the reply in the on-site reviews section (without your name if anonymous).",
+    "allowPublicReply": "Allow an admin to publish the reply in the on-site reviews section (without your name if anonymous).",
+    "emailFromAuth": "Uses your Google account email.",
     "errors": {
       "type": "Choose a feedback type",
       "topic": "Choose a topic",
@@ -161,7 +164,10 @@
     "dashboard": "Feedback",
     "recipients": "Recipients",
     "admins": "Admins",
-    "recipientsHint": "Recipient emails will be used for notifications (Rocket Chat later).",
+    "recipientsHint": "The name appears in the feedback form. Email is used to notify the recipient about new feedback.",
+    "recipientsAdd": "Add recipient",
+    "recipientsDeleteConfirm": "Delete this recipient?",
+    "delete": "Delete",
     "adminsHint": "Invite a colleague by corporate email. Rights appear after they sign in.",
     "activeAdmins": "Active",
     "pendingInvites": "Invites",
@@ -204,7 +210,8 @@
       "send": "Send reply",
       "sending": "Sending…",
       "public": "On site",
-      "publishHint": "Publish this reply in the on-site reviews section"
+      "publishHint": "Publish this reply in the on-site reviews section",
+      "noPublicOptIn": "The author did not allow publishing the reply on the site."
     },
     "errors": {
       "load": "Could not load data.",

@@ -1,9 +1,10 @@
 import { FirebaseError } from 'firebase/app'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 
-import { DEFAULT_RECIPIENT_IDS } from '@/lib/constants'
 import { isFirebaseConfigured } from '@/lib/env'
 import { getDb, getFirebaseAuth } from '@/lib/firebase'
+import { getRecipient } from '@/lib/api/recipients'
+import { notifyRecipientOfFeedback } from '@/lib/api/notifyRecipient'
 import type { FeedbackSubmissionInput } from '@/types/feedback'
 
 export type SubmitFeedbackResult = { id: string }
@@ -25,17 +26,6 @@ export class SubmitFeedbackError extends Error {
   }
 }
 
-const RECIPIENT_NAMES: Record<(typeof DEFAULT_RECIPIENT_IDS)[number], string> = {
-  unspecified: 'Unspecified',
-  owner: 'Owner',
-  ceo: 'CEO',
-  hrd: 'HR Director',
-  sfo: 'Security / Compliance',
-  tso: 'Tech / Operations',
-  cco: 'Customer / Commercial',
-  cmo: 'Marketing / Communications',
-}
-
 function mapFirestoreError(err: unknown): SubmitFeedbackError {
   if (err instanceof FirebaseError) {
     if (err.code === 'permission-denied') {
@@ -51,9 +41,10 @@ function mapFirestoreError(err: unknown): SubmitFeedbackError {
   return new SubmitFeedbackError('unknown')
 }
 
-/** Writes feedback to Firestore (Spark-friendly — no Cloud Functions). */
+/** Writes feedback to Firestore and best-effort notifies the recipient by email. */
 export async function submitFeedback(
   input: FeedbackSubmissionInput,
+  topicLabel?: string,
 ): Promise<SubmitFeedbackResult> {
   if (!isFirebaseConfigured()) {
     throw new SubmitFeedbackError('not_configured')
@@ -72,15 +63,14 @@ export async function submitFeedback(
 
   const accessEmail = user.email.trim().toLowerCase()
   const isIdentified = input.type === 'identified'
-  const recipientName =
-    RECIPIENT_NAMES[input.recipientId as keyof typeof RECIPIENT_NAMES] ?? input.recipientId
+  const recipientName = input.recipientName.trim() || input.recipientId
 
   try {
     const ref = await addDoc(collection(getDb(), 'feedback'), {
       type: input.type,
       name: isIdentified ? input.name ?? null : null,
       nickname: isIdentified ? input.nickname ?? null : null,
-      email: isIdentified ? input.email ?? null : null,
+      email: isIdentified ? accessEmail : null,
       topicId: input.topicId,
       message: input.message,
       recipientId: input.recipientId,
@@ -93,6 +83,21 @@ export async function submitFeedback(
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
+
+    try {
+      const recipient = await getRecipient(input.recipientId)
+      if (recipient?.email) {
+        await notifyRecipientOfFeedback({
+          to: recipient.email,
+          recipientName,
+          feedback: { ...input, email: isIdentified ? accessEmail : input.email },
+          topicLabel: topicLabel ?? input.topicId,
+          feedbackId: ref.id,
+        })
+      }
+    } catch {
+      // Notify is best-effort — do not fail the submission.
+    }
 
     return { id: ref.id }
   } catch (err) {

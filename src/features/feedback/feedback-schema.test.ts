@@ -50,11 +50,14 @@ describe('feedback-schema', () => {
       },
       'uk',
       'user@221e.space',
+      'CEO',
+      ['ceo', 'hrd'],
     )
     expect(payload).toMatchObject({
       type: 'anonymous',
       topicId: 'thanks',
       recipientId: 'ceo',
+      recipientName: 'CEO',
       language: 'uk',
       accessEmail: 'user@221e.space',
       allowPublicReply: false,

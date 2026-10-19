@@ -39,6 +39,24 @@ GitHub Pages builds with repository secrets `VITE_FIREBASE_*`.
 
 ## Indexes
 
-When Console asks for a composite index (feedback replies / public reviews), create it from the error link, or deploy `firestore.indexes.json`.
+Public reviews no longer need a composite index. Other indexes in `firestore.indexes.json` are optional.
 
-Optional Cloud Functions remain in `functions/` for a future upgrade (Rocket Chat), but are **not required**.
+## Email notify to recipients (Spark-friendly)
+
+After a feedback is submitted, TrustBox tries to email the chosen recipient **if** that recipient has an email in Admin → Recipients.
+
+Configure **one** option in `.env` / GitHub secrets:
+
+1. **EmailJS** (simplest): create a service + template with `to_email`, `subject`, `message`  
+   Set `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, `VITE_EMAILJS_PUBLIC_KEY`
+2. **Webhook**: `VITE_NOTIFY_WEBHOOK_URL` — receives JSON `{ to, subject, text, html, ... }`
+
+Without either, submit still works; only the email is skipped.
+
+## Public reviews
+
+1. Author checks “allow publish” on the form (`allowPublicReply`)
+2. Admin opens the feedback → replies → checks **Publish on site**
+3. The reply appears in the landing **Reviews** section
+
+Optional Cloud Functions remain in `functions/` for Rocket Chat later.

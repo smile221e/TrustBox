@@ -47,11 +47,18 @@ export function isFeedbackType(value: string): value is FeedbackType {
   return (FEEDBACK_TYPES as readonly string[]).includes(value)
 }
 
-export function isRecipientId(value: string): boolean {
-  return (DEFAULT_RECIPIENT_IDS as readonly string[]).includes(value)
+export function isRecipientId(value: string, allowedIds?: readonly string[]): boolean {
+  if (!value || value.length > 64) return false
+  if (allowedIds && allowedIds.length > 0) {
+    return allowedIds.includes(value)
+  }
+  return true
 }
 
-export function validateStepOne(values: FeedbackFormValues): FeedbackFieldErrors {
+export function validateStepOne(
+  values: FeedbackFormValues,
+  allowedRecipientIds?: readonly string[],
+): FeedbackFieldErrors {
   const errors: FeedbackFieldErrors = {}
 
   if (!isFeedbackType(values.type)) {
@@ -60,7 +67,7 @@ export function validateStepOne(values: FeedbackFormValues): FeedbackFieldErrors
   if (!values.topicId || !isTopicId(values.topicId)) {
     errors.topicId = 'form.errors.topic'
   }
-  if (!values.recipientId || !isRecipientId(values.recipientId)) {
+  if (!isRecipientId(values.recipientId, allowedRecipientIds)) {
     errors.recipientId = 'form.errors.recipient'
   }
 
@@ -96,8 +103,10 @@ export function toSubmissionInput(
   values: FeedbackFormValues,
   language: FeedbackSubmissionInput['language'],
   accessEmail: string,
+  recipientName: string,
+  allowedRecipientIds?: readonly string[],
 ): FeedbackSubmissionInput | null {
-  if (!isTopicId(values.topicId) || !isRecipientId(values.recipientId)) {
+  if (!isTopicId(values.topicId) || !isRecipientId(values.recipientId, allowedRecipientIds)) {
     return null
   }
 
@@ -106,6 +115,7 @@ export function toSubmissionInput(
     topicId: values.topicId,
     message: values.message.trim(),
     recipientId: values.recipientId,
+    recipientName: recipientName.trim() || values.recipientId,
     language,
     accessEmail,
     allowPublicReply: values.allowPublicReply,
@@ -117,7 +127,7 @@ export function toSubmissionInput(
       ...base,
       name: values.name.trim(),
       nickname: values.nickname.trim() || undefined,
-      email: values.email.trim(),
+      email: accessEmail,
     }
   }
 

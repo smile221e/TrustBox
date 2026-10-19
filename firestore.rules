@@ -37,14 +37,14 @@ service cloud.firestore {
       ];
     }
 
-    function isRecipientId(value) {
-      return value in [
-        'unspecified', 'owner', 'ceo', 'hrd', 'sfo', 'tso', 'cco', 'cmo'
-      ];
-    }
-
     function isLanguage(value) {
       return value in ['uk', 'en', 'es'];
+    }
+
+    function validRecipientId(value) {
+      return value is string
+        && value.size() >= 1
+        && value.size() <= 64;
     }
 
     function isBootstrapSuperAdminCreate() {
@@ -75,7 +75,10 @@ service cloud.firestore {
         && request.resource.data.status == 'new'
         && request.resource.data.type in ['anonymous', 'identified']
         && isTopicId(request.resource.data.topicId)
-        && isRecipientId(request.resource.data.recipientId)
+        && validRecipientId(request.resource.data.recipientId)
+        && request.resource.data.recipientName is string
+        && request.resource.data.recipientName.size() >= 1
+        && request.resource.data.recipientName.size() <= 120
         && isLanguage(request.resource.data.language)
         && request.resource.data.allowPublicReply is bool
         && request.resource.data.message is string
@@ -119,13 +122,19 @@ service cloud.firestore {
     }
 
     match /recipients/{id} {
-      allow read: if isAdmin();
+      // Employees need names for the form; emails are corporate-internal.
+      allow read: if corporateEmail() || isAdmin();
+
       allow create, update: if isAdmin()
+        && validRecipientId(id)
         && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 120
         && request.resource.data.email is string
         && request.resource.data.isActive is bool
         && request.resource.data.sortOrder is int;
-      allow delete: if isSuperAdmin();
+
+      allow delete: if isAdmin();
     }
 
     match /admins/{uid} {

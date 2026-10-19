@@ -9,15 +9,22 @@ export function ReviewsSection() {
   const { t } = useTranslation()
   const [items, setItems] = useState<AdminReplyDoc[]>([])
   const [loaded, setLoaded] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     void (async () => {
       try {
         const data = await listPublicReviews()
-        if (!cancelled) setItems(data)
+        if (!cancelled) {
+          setItems(data)
+          setFailed(false)
+        }
       } catch {
-        if (!cancelled) setItems([])
+        if (!cancelled) {
+          setItems([])
+          setFailed(true)
+        }
       } finally {
         if (!cancelled) setLoaded(true)
       }
@@ -27,7 +34,7 @@ export function ReviewsSection() {
     }
   }, [])
 
-  if (!loaded || items.length === 0) {
+  if (!loaded) {
     return null
   }
 
@@ -46,23 +53,33 @@ export function ReviewsSection() {
           </p>
         </Reveal>
 
-        <ul className="mt-12 grid gap-8 md:grid-cols-2">
-          {items.map((item, index) => (
-            <Reveal key={item.id} delay={index * 0.05}>
-              <li className="space-y-3">
-                {item.topicId && (
-                  <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-                    {t(`topics.${item.topicId}`, { defaultValue: item.topicId })}
+        {failed && (
+          <p className="mt-8 text-sm text-[var(--color-muted-foreground)]">{t('landing.reviews.error')}</p>
+        )}
+
+        {!failed && items.length === 0 && (
+          <p className="mt-8 text-sm text-[var(--color-muted-foreground)]">{t('landing.reviews.empty')}</p>
+        )}
+
+        {items.length > 0 && (
+          <ul className="mt-12 grid gap-8 md:grid-cols-2">
+            {items.map((item, index) => (
+              <Reveal key={item.id} delay={index * 0.05}>
+                <li className="space-y-3">
+                  {item.topicId && (
+                    <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
+                      {t(`topics.${item.topicId}`, { defaultValue: item.topicId })}
+                    </p>
+                  )}
+                  <p className="whitespace-pre-wrap text-base leading-relaxed">{item.body}</p>
+                  <p className="text-xs text-[var(--color-muted-foreground)]">
+                    {formatFeedbackDate(item.createdAt)}
                   </p>
-                )}
-                <p className="whitespace-pre-wrap text-base leading-relaxed">{item.body}</p>
-                <p className="text-xs text-[var(--color-muted-foreground)]">
-                  {formatFeedbackDate(item.createdAt)}
-                </p>
-              </li>
-            </Reveal>
-          ))}
-        </ul>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   )

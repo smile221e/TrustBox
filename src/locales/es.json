@@ -80,7 +80,9 @@
     },
     "reviews": {
       "title": "Respuestas del equipo",
-      "subtitle": "Respuestas públicas que los autores permitieron compartir."
+      "subtitle": "Respuestas públicas tras el permiso del autor y la publicación del admin.",
+      "empty": "Aún no hay respuestas publicadas. Aparecerán aquí cuando un admin publique una respuesta con permiso del autor.",
+      "error": "No se pudieron cargar las respuestas. Prueba a actualizar la página."
     }
   },
   "form": {
@@ -119,7 +121,8 @@
       "placeholder": "Describe la situación con el mayor detalle posible…",
       "hint": "Mínimo {{min}} caracteres"
     },
-    "allowPublicReply": "Permitir mostrar la respuesta en la sección de reseñas del sitio (sin tu nombre si es anónimo).",
+    "allowPublicReply": "Permitir que un admin publique la respuesta en la sección de reseñas (sin tu nombre si es anónimo).",
+    "emailFromAuth": "Se usa el email de tu cuenta de Google.",
     "errors": {
       "type": "Elige un tipo de mensaje",
       "topic": "Elige un tema",
@@ -161,7 +164,10 @@
     "dashboard": "Mensajes",
     "recipients": "Destinatarios",
     "admins": "Admins",
-    "recipientsHint": "Los emails de destinatarios se usarán para notificaciones (Rocket Chat más adelante).",
+    "recipientsHint": "El nombre aparece en el formulario. El email se usa para avisar al destinatario de un nuevo mensaje.",
+    "recipientsAdd": "Añadir destinatario",
+    "recipientsDeleteConfirm": "¿Eliminar este destinatario?",
+    "delete": "Eliminar",
     "adminsHint": "Invita a un colega por email corporativo. Los permisos aparecen tras iniciar sesión.",
     "activeAdmins": "Activos",
     "pendingInvites": "Invitaciones",
@@ -204,7 +210,8 @@
       "send": "Enviar respuesta",
       "sending": "Enviando…",
       "public": "En el sitio",
-      "publishHint": "Publicar esta respuesta en la sección de reseñas del sitio"
+      "publishHint": "Publicar esta respuesta en la sección de reseñas del sitio",
+      "noPublicOptIn": "El autor no permitió publicar la respuesta en el sitio."
     },
     "errors": {
       "load": "No se pudieron cargar los datos.",
