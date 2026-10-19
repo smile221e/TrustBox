@@ -79,10 +79,11 @@
       "subtitle": "Two steps — and your feedback is ready to send."
     },
     "reviews": {
-      "title": "Team replies",
-      "subtitle": "Public replies after the author opts in and an admin publishes.",
-      "empty": "No published replies yet. They appear here when an admin publishes a reply to feedback with author permission.",
-      "error": "Could not load replies. Try refreshing the page."
+      "title": "Replies",
+      "empty": "No published replies yet.",
+      "error": "Could not load replies. Try refreshing the page.",
+      "upvote": "Upvote",
+      "admin": "Admin"
     }
   },
   "form": {

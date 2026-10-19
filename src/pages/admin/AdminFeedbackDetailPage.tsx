@@ -84,6 +84,10 @@ function DetailInner() {
         body: replyBody,
         isPublic: item.allowPublicReply && publishPublic,
         topicId: item.topicId,
+        questionText: item.message,
+        authorKind: item.type,
+        authorName: item.name,
+        feedbackStatus: item.status === 'new' ? 'in_progress' : item.status,
       })
       if (item.status === 'new') {
         await updateFeedbackStatus(item.id, 'in_progress')

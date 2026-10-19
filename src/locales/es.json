@@ -79,10 +79,11 @@
       "subtitle": "Dos pasos — y tu mensaje queda listo para enviar."
     },
     "reviews": {
-      "title": "Respuestas del equipo",
-      "subtitle": "Respuestas públicas tras el permiso del autor y la publicación del admin.",
-      "empty": "Aún no hay respuestas publicadas. Aparecerán aquí cuando un admin publique una respuesta con permiso del autor.",
-      "error": "No se pudieron cargar las respuestas. Prueba a actualizar la página."
+      "title": "Respuestas",
+      "empty": "Aún no hay respuestas publicadas.",
+      "error": "No se pudieron cargar las respuestas. Prueba a actualizar la página.",
+      "upvote": "Votar",
+      "admin": "Admin"
     }
   },
   "form": {
