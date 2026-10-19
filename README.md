@@ -103,12 +103,12 @@ Callable: `submitFeedback` (honeypot + rate limit + validation + Firestore write
 
 Workflow: `.github/workflows/deploy.yml` → після push у `main`:
 
-`https://kyryloyakymchuck.github.io/trustbox/#/`
+`https://smile221e.github.io/TrustBox/#/`
 
 Перед тестом продакшену:
 
 1. Firebase Authentication → Google увімкнено.
-2. Authorized domains: `localhost` + `kyryloyakymchuck.github.io`.
+2. Authorized domains: `localhost` + `smile221e.github.io`.
 3. Repository secrets `VITE_FIREBASE_*` (уже для CI).
 4. Cloud Functions (потрібен план **Blaze**):  
    `npx firebase-tools login` → `npx firebase-tools deploy --only firestore:rules,firestore:indexes,functions`  
