@@ -15,10 +15,11 @@ export function AppShell() {
   const { t, i18n } = useTranslation()
   const { theme, toggleTheme } = useTheme()
   const { lock } = useAccess()
-  const { isAdmin } = useAdmin()
+  const { isAdmin, loading: adminLoading } = useAdmin()
   const location = useLocation()
   const isLanding = location.pathname === '/'
   const isAdminRoute = location.pathname.startsWith('/admin')
+  const showAdminLink = !adminLoading && isAdmin
 
   const changeLanguage = (lng: AppLanguage) => {
     void i18n.changeLanguage(lng)
@@ -58,7 +59,7 @@ export function AppShell() {
               </nav>
             )}
 
-            {isAdmin && !isAdminRoute && (
+            {showAdminLink && !isAdminRoute && (
               <Button asChild variant="ghost" size="sm">
                 <Link to="/admin/dashboard">{t('nav.admin')}</Link>
               </Button>
@@ -127,10 +128,14 @@ export function AppShell() {
           >
             {t('nav.privacy')}
           </SectionLink>
-          <span className="mx-2">·</span>
-          <Link to="/admin" className="hover:text-[var(--color-foreground)]">
-            {t('nav.admin')}
-          </Link>
+          {showAdminLink && (
+            <>
+              <span className="mx-2">·</span>
+              <Link to="/admin/dashboard" className="hover:text-[var(--color-foreground)]">
+                {t('nav.admin')}
+              </Link>
+            </>
+          )}
         </p>
       </footer>
     </div>

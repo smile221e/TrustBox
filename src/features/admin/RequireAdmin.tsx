@@ -28,7 +28,7 @@ export function RequireAdmin({
   }
 
   if (!isAdmin || (superOnly && !isSuperAdmin)) {
-    return <Navigate to="/admin" replace />
+    return <Navigate to="/" replace />
   }
 
   return children
