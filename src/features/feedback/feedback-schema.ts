@@ -88,7 +88,7 @@ export function validateStepTwo(values: FeedbackFormValues): FeedbackFieldErrors
   return errors
 }
 
-/** Build the payload that Stage 04 will send to Cloud Functions. */
+/** Build the payload for Firestore feedback submit. */
 export function toSubmissionInput(
   values: FeedbackFormValues,
   language: FeedbackSubmissionInput['language'],

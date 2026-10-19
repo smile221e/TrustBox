@@ -1,15 +1,7 @@
-import {
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 import { useAuth } from '@/hooks/useAuth'
 import { isAllowedCorporateEmail, normalizeEmail } from '@/lib/access'
-import { VerifyAccessError, verifyAccessEmail } from '@/lib/api/verifyAccessEmail'
 import { STORAGE_KEYS } from '@/lib/constants'
 import { AccessContext } from '@/providers/access-context'
 
@@ -21,19 +13,30 @@ function clearLegacyAccessStorage() {
   }
 }
 
+/**
+ * Unlocks the app for Google users with an @221e.space mailbox.
+ * No PeopleForce / Cloud Functions required.
+ */
 export function AccessProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading, signOut } = useAuth()
-  const [allowedEmail, setAllowedEmail] = useState<string | null>(null)
-  const [peopleForcePending, setPeopleForcePending] = useState(false)
-  const [errorCode, setErrorCode] = useState<string | null>(null)
-  const [verifiedForUid, setVerifiedForUid] = useState<string | null>(null)
+  const [domainErrorSticky, setDomainErrorSticky] = useState(false)
 
-  const clearError = useCallback(() => setErrorCode(null), [])
+  const email = user?.email ? normalizeEmail(user.email) : null
+  const domainDenied = Boolean(email && !isAllowedCorporateEmail(email))
+  const allowedEmail = email && isAllowedCorporateEmail(email) ? email : null
+
+  // Keep domain error visible after we sign the user out.
+  if (domainDenied && !domainErrorSticky) {
+    setDomainErrorSticky(true)
+  } else if (allowedEmail && domainErrorSticky) {
+    setDomainErrorSticky(false)
+  }
+
+  const clearError = useCallback(() => setDomainErrorSticky(false), [])
 
   const lock = useCallback(async () => {
     clearLegacyAccessStorage()
-    setAllowedEmail(null)
-    setVerifiedForUid(null)
+    setDomainErrorSticky(false)
     await signOut()
   }, [signOut])
 
@@ -42,88 +45,21 @@ export function AccessProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (authLoading) return
-
-    const email = user?.email ? normalizeEmail(user.email) : null
-    const uid = user?.uid ?? null
-
-    let cancelled = false
-
-    void (async () => {
-      if (!email || !uid) {
-        startTransition(() => {
-          if (cancelled) return
-          setAllowedEmail(null)
-          setVerifiedForUid(null)
-          setPeopleForcePending(false)
-        })
-        return
-      }
-
-      if (verifiedForUid === uid && allowedEmail === email) {
-        return
-      }
-
-      startTransition(() => {
-        if (!cancelled) setPeopleForcePending(true)
-      })
-
-      try {
-        if (!isAllowedCorporateEmail(email)) {
-          if (cancelled) return
-          setErrorCode('domain')
-          setAllowedEmail(null)
-          setVerifiedForUid(null)
-          await signOut()
-          return
-        }
-
-        const result = await verifyAccessEmail(email)
-        if (cancelled) return
-
-        if (!result.allowed) {
-          setErrorCode('domain')
-          setAllowedEmail(null)
-          setVerifiedForUid(null)
-          await signOut()
-          return
-        }
-
-        setErrorCode(null)
-        setAllowedEmail(result.email ?? email)
-        setVerifiedForUid(uid)
-      } catch (err) {
-        if (cancelled) return
-        if (err instanceof VerifyAccessError) {
-          setErrorCode(err.code)
-        } else {
-          setErrorCode('unavailable')
-        }
-        setAllowedEmail(null)
-        setVerifiedForUid(null)
-        await signOut()
-      } finally {
-        if (!cancelled) setPeopleForcePending(false)
-      }
-    })()
-
-    return () => {
-      cancelled = true
+    if (domainDenied) {
+      void signOut()
     }
-  }, [user, authLoading, signOut, verifiedForUid, allowedEmail])
-
-  const isChecking = authLoading || peopleForcePending
+  }, [domainDenied, signOut])
 
   const value = useMemo(
     () => ({
       email: allowedEmail,
-      isUnlocked: Boolean(allowedEmail) && !isChecking,
-      isChecking,
-      errorCode,
+      isUnlocked: Boolean(allowedEmail) && !authLoading,
+      isChecking: authLoading,
+      errorCode: domainErrorSticky ? 'domain' : null,
       clearError,
       lock,
     }),
-    [allowedEmail, isChecking, errorCode, clearError, lock],
+    [allowedEmail, authLoading, domainErrorSticky, clearError, lock],
   )
 
   return <AccessContext.Provider value={value}>{children}</AccessContext.Provider>

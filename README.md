@@ -87,17 +87,11 @@ npm run dev
 
 Коротко:
 
-1. Створити Firebase project + Firestore + Auth (Email/Password).
+1. Створити Firebase project + Firestore + Auth (Google).
 2. Скопіювати web config у `.env` (`cp .env.example .env`).
-3. Задеплоїти rules, indexes і Functions:
+3. Опублікувати `firestore.rules` у Console (або `firebase deploy --only firestore:rules`).
 
-```bash
-cd functions && npm install && npm run build && cd ..
-firebase login && firebase use <project-id>
-firebase deploy --only firestore:rules,firestore:indexes,functions
-```
-
-Callable: `submitFeedback` (honeypot + rate limit + validation + Firestore write).
+Логін: Google `@221e.space`. Submit: прямий запис у Firestore.
 
 ## GitHub Pages
 
@@ -109,12 +103,10 @@ Workflow: `.github/workflows/deploy.yml` → після push у `main`:
 
 1. Firebase Authentication → Google увімкнено.
 2. Authorized domains: `localhost` + `smile221e.github.io`.
-3. Repository secrets `VITE_FIREBASE_*` (уже для CI).
-4. Cloud Functions (потрібен план **Blaze**):  
-   `npx firebase-tools login` → `npx firebase-tools deploy --only firestore:rules,firestore:indexes,functions`  
-   з `PEOPLEFORCE_API_KEY` у `functions/.env`.
+3. Firestore створено + опубліковані `firestore.rules`.
+4. Repository secrets `VITE_FIREBASE_*` (уже для CI).
 
-Без Functions Google-вхід на Pages не пройде PeopleForce-перевірку.
+Spark (безкоштовний план) достатньо: логін Google `@221e.space` + запис звернень у Firestore.
 
 ## Статус інтеграцій
 
@@ -123,7 +115,7 @@ Workflow: `.github/workflows/deploy.yml` → після push у `main`:
 | React / Vite / Tailwind / i18n / theme | ✅ Етап 01 |
 | Landing UI / Motion / shadcn | ✅ Етап 02 |
 | Feedback form | ✅ Етап 03 |
-| Firestore + Functions submit API | ✅ Етап 04 |
+| Google auth (@221e.space) + Firestore submit | ✅ Етап 04 |
 | Admin auth / CRUD | ⏳ Етап 05 |
 | Email (Resend) + E2E | ⏳ Етап 06 |
 

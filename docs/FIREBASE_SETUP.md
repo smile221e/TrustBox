@@ -1,82 +1,38 @@
-# Firebase setup (Stage 04)
+# Firebase setup (Spark-friendly)
 
-## Access gate (Google + PeopleForce)
+TrustBox auth & submit work **without Cloud Functions / Blaze**.
 
-1. Enable **Authentication → Google** in Firebase Console.
-2. Add authorized domains (`localhost`, your GitHub Pages host).
-3. Fill `VITE_FIREBASE_*` in `.env`.
-4. User signs in with **Google** (prefer `@221e.space` Workspace).
-5. Server checks PeopleForce: active employee under **221e** (`99123`) or **ITC** (`38131`).
+## 1. Project
 
-Callables `verifyAccessEmail` and `submitFeedback` require a Firebase Auth session.
-Email is taken from the ID token — the client cannot spoof another mailbox.
+1. [Firebase Console](https://console.firebase.google.com/) → project `trustbox-221e`
+2. Add a **Web app** → copy config into `.env` as `VITE_FIREBASE_*`
+3. **Authentication** → Sign-in method → enable **Google**
+4. Authorized domains: `localhost`, `smile221e.github.io`
+5. **Firestore Database** → Create database (production mode)
 
-Local PeopleForce check in `npm run dev`: Vite `/api/verify-access` + `PEOPLEFORCE_API_KEY` in `.env`.
-Production: same key on Cloud Functions (`functions/.env` / Secret Manager).
+## 2. Security rules
 
-Until Functions are deployed, GitHub Pages may use `VITE_ALLOW_DOMAIN_FALLBACK=true`
-(any Google user with `@221e.space`). Turn it **off** after Functions go live.
+Paste contents of `firestore.rules` into  
+Firestore → Rules → Publish.
 
-Also add Firebase Auth authorized domain: `smile221e.github.io`.
+Rules allow:
 
-**Never commit the PeopleForce Company API key.**
+- Google users with `@221e.space` → **create** feedback
+- Admins only → **read** feedback (Stage 05)
 
-
-## 1. Create project
-
-1. Open [Firebase Console](https://console.firebase.google.com/) → Create project.
-2. Enable **Authentication** → Email/Password (needed for Stage 05 admin).
-3. Create **Firestore** (production mode is fine — rules deploy next).
-4. Register a **Web app** and copy the config into `.env`:
+## 3. Local / Pages
 
 ```bash
-cp .env.example .env
+cp .env.example .env   # fill VITE_FIREBASE_*
+npm run dev
 ```
 
-Fill all `VITE_FIREBASE_*` values.
+GitHub Pages builds with repository secrets `VITE_FIREBASE_*`.
 
-## 2. Install & deploy backend
+## Access model
 
-```bash
-# root
-npm install
+1. Sign in with Google
+2. Email must be `@221e.space`
+3. Submit writes to `feedback` in Firestore
 
-cd functions
-npm install
-npm run build
-cd ..
-
-firebase login
-firebase use <project-id>
-firebase deploy --only firestore:rules,firestore:indexes,functions
-```
-
-Callable deployed: `submitFeedback` (region `europe-west1`).
-
-## 3. Seed recipients (optional)
-
-Function falls back to built-in recipient ids if docs are missing.
-To override names/emails (emails used in Stage 06 notify), create docs in `recipients/{id}`
-using `scripts/seed-recipients.json` as a template (Console or Admin SDK).
-
-Leave `email` empty until Stage 06.
-
-## 4. Local emulators (optional)
-
-```bash
-firebase emulators:start --only auth,firestore,functions
-```
-
-In `.env`:
-
-```
-VITE_USE_FIREBASE_EMULATOR=true
-```
-
-Then `npm run dev` and submit the form against emulators.
-
-## 5. Verify
-
-1. Open the landing → fill the two-step form → Submit.
-2. In Firestore, a `feedback/{id}` document appears with `status: new`.
-3. A second burst of submits from the same IP should hit rate limit after 5/hour.
+Optional Cloud Functions / PeopleForce remain in `functions/` for a future upgrade, but are **not required**.

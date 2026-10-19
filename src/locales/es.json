@@ -28,7 +28,7 @@
     "errors": {
       "domain": "Correo corporativo incorrecto",
       "invalid": "Correo corporativo incorrecto",
-      "not_configured": "El backend aún no está conectado (Cloud Functions). Consulta a un admin.",
+      "not_configured": "Firebase aún no está configurado. Añade VITE_FIREBASE_* en .env.",
       "unavailable": "No se pudo verificar el email. Inténtalo más tarde.",
       "unknown": "No se pudo verificar el email. Inténtalo más tarde.",
       "unauthenticated": "Primero inicia sesión con Google.",
@@ -68,7 +68,7 @@
     },
     "privacy": {
       "title": "Privacidad por defecto",
-      "body": "Los envíos anónimos no requieren nombre ni email. Solo los administradores autorizados pueden leer los mensajes. El cliente nunca escribe directamente en la base de datos — solo a través de una función de servidor validada."
+      "body": "Los envíos anónimos no requieren nombre ni email. Solo los administradores autorizados pueden leer los mensajes. La escritura está protegida por reglas de Firestore y una cuenta Google corporativa."
     },
     "topics": {
       "title": "Sobre qué puedes escribir",
@@ -126,7 +126,6 @@
       "messageLong": "El mensaje es demasiado largo",
       "submit": {
         "not_configured": "Firebase aún no está configurado. Añade VITE_FIREBASE_* en .env.",
-        "rate_limited": "Demasiados envíos desde tu red. Inténtalo más tarde.",
         "invalid": "Revisa los campos e inténtalo de nuevo.",
         "unavailable": "El servicio no está disponible temporalmente. Inténtalo más tarde.",
         "unauthenticated": "Sesión caducada. Vuelve a iniciar sesión con Google.",

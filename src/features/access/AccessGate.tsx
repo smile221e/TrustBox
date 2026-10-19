@@ -33,7 +33,7 @@ function GoogleMark({ className }: { className?: string }) {
 }
 
 /**
- * Full-viewport gate: Google Sign-In, then PeopleForce department check.
+ * Full-viewport gate: Google Sign-In, then @221e.space domain check.
  */
 export function AccessGate() {
   const { t, i18n } = useTranslation()
@@ -62,7 +62,7 @@ export function AccessGate() {
     setSigningIn(true)
     try {
       await signInWithGoogle()
-      // AccessProvider verifies PeopleForce and unlocks (or signs out on failure).
+      // AccessProvider checks @221e.space and unlocks (or signs out on failure).
     } catch (err) {
       const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : ''
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {

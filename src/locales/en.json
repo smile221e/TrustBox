@@ -28,7 +28,7 @@
     "errors": {
       "domain": "Incorrect corporate email",
       "invalid": "Incorrect corporate email",
-      "not_configured": "Backend is not connected yet (Cloud Functions). Ask an admin.",
+      "not_configured": "Firebase is not configured yet. Add VITE_FIREBASE_* to .env.",
       "unavailable": "Could not verify email. Please try later.",
       "unknown": "Could not verify email. Please try later.",
       "unauthenticated": "Please sign in with Google first.",
@@ -68,7 +68,7 @@
     },
     "privacy": {
       "title": "Privacy by default",
-      "body": "Anonymous submissions need no name or email. Only authorized admins can read feedback. The client never writes to the database directly — only through a validated server function."
+      "body": "Anonymous submissions need no name or email. Only authorized admins can read feedback. Writes are protected by Firestore rules and a corporate Google account."
     },
     "topics": {
       "title": "What you can write about",
@@ -126,7 +126,6 @@
       "messageLong": "Message is too long",
       "submit": {
         "not_configured": "Firebase is not configured yet. Add VITE_FIREBASE_* to .env.",
-        "rate_limited": "Too many submissions from your network. Please try later.",
         "invalid": "Check the form fields and try again.",
         "unavailable": "The service is temporarily unavailable. Please try later.",
         "unauthenticated": "Session expired. Sign in with Google again.",
